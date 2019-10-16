@@ -16,7 +16,6 @@ be described as "the way we do things".
 ## Table of Contents
 [Table of Contents]: #table-of-contents
 
-  - [Table of Contents]
   - [When you need to follow this process]
   - [Before creating an RFC]
   - [What the process is]
