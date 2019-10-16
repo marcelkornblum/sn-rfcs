@@ -1,7 +1,6 @@
 # Signal Noise RFCs
 
-[Signal Noise RFCs]: #sn-rfcs
-[Active RFCs](https://github.io/signal-noise/rfcs)
+[Active RFCs](https://signal-noise.github.io/rfcs)
 
 Many aspects of the way we do things at Signal Noise merit being 
 standardised. By documenting workflows, techniques and tools that we as a 
@@ -17,7 +16,6 @@ be described as "the way we do things".
 ## Table of Contents
 [Table of Contents]: #table-of-contents
 
-  - [Opening](sn-rfcs)
   - [Table of Contents]
   - [When you need to follow this process]
   - [Before creating an RFC]
@@ -70,7 +68,7 @@ beforehand, to ascertain that the RFC may be desirable; having a consistent
 impact the way we do things requires concerted effort toward consensus-building.
 
 The most common preparations for writing and submitting an RFC include talking
-the idea over on the `development` channel on Slack. You may file issues on this 
+the idea over on the `#development` channel on Slack. You may file issues on this 
 repo for discussion, but these are not actively looked at by the team.
 
 As a rule of thumb, receiving encouraging feedback from senior developers is a 
@@ -85,8 +83,9 @@ RFC merged into the RFC repository as a markdown file. At that point the RFC is
 "active".
 
   - Fork the RFC repo [RFC repository]
-  - Copy `0000-template.md` to `text/0000-my-feature.md` (where "my-feature" is
-    descriptive. don't assign an RFC number yet).
+  - Copy `0000-template.md` to `text/1234-my-feature.md` (where "my-feature" is
+    descriptive. Assign an RFC number as the next available sequential number 
+    and use that in the filename).
   - Fill in the RFC. Put care into the details: RFCs that do not present
     convincing motivation, demonstrate lack of understanding of the proposal's
     impact, or are disingenuous about the drawbacks or alternatives tend to
