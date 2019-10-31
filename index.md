@@ -28,6 +28,7 @@ Here's a relevant part of Python's [PEP 8](https://www.python.org/dev/peps/pep-
 
 Please jump into a specific RFC below:
 
-## Approaches and methodologies
+## Approach and methodologies
 
-## Tools
+* [0001 Git Workflow](./text/0001-git-workflow)
+
