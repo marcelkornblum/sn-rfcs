@@ -1,38 +1,96 @@
 - Feature Name: `hosting`
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+- Start Date: 2019-11-23
 - RFC PR: [signal-noise/rfcs#0000](https://github.com/signal-noise/rfcs/pull/0000)
 
 # Summary
 
 [summary]: #summary
 
-One paragraph explanation of the proposal.
+A rundown of the common approaches to hosting used at Signal Noise, along with guidance about when to choose different setups and how to go about creating a new project.
 
-# Motivation
-
-[motivation]: #motivation
-
-Why are we doing this? What use cases does it support? What is the expected outcome?
+We typically use one (or both) of [AWS](https://aws.amazon.com/) and [GCP](https://cloud.google.com/) for hosting when possible. We also have legacy projects on other platforms including Heroku but they are not discussed in this document.
 
 # Guide-level explanation
 
 [guide-level-explanation]: #guide-level-explanation
 
-Explain the proposal as if it were already included in the Signal Noise way of doing things and you were teaching it to another programmer. That generally means:
+## Setting up a new project
 
-- Introducing new named concepts.
-- Explaining the technique or tool largely in terms of examples.
-- Explaining how programmers should _think_ about the workflow, tool or process, and how it should impact the way they work. It should explain the impact as concretely as possible.
+### Secrets
 
-This section should provide an example-driven introduction to the policy, and explain its impact in concrete terms.
+.env
+
+dashlane
+
+### Setting up a new AWS account
+
+### Setting up a new GCP project
+
+### Static hosting on AWS
+
+### Static hosting on GCP
+
+### Dynamic hosting on AWS
+
+### Dynamic hosting on GCP
+
+## Accessing resources
+
+### AWS
+
+### GCP
 
 # Reference-level explanation
 
 [reference-level-explanation]: #reference-level-explanation
 
-This is the technical portion of the RFC. Explain the proposal in sufficient detail that its interaction with other tools or approaches is clear.
+## Domains
 
-The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
+## AWS account structure
+
+We have multiple AWS accounts set up as parts of an [AWS Organisation](https://aws.amazon.com/organizations/). This allows us to improve security for specific projects and across client hosting, as well as to make project billing simpler and clearer.
+
+The AWS accounts we run are:
+
+### Master
+
+This is used for billing, internal team IAM and audit only. No resources should be created in this account.
+
+### Sandbox
+
+This is for experimentation. All developers have admin access to this account, but any resources they create should be terminated ASAP, and may be terminated at any time.
+
+### Internal
+
+For projects where we are the client - internal tooling, "FTP", internal projects etc.
+
+### Legacy
+
+(to be shut down)
+
+### Development
+
+All other environments for all other projects should go into the Development account. Deleting any resource in this account should have low impact.
+
+### Specific Client accounts
+
+Projects should go in a Specific Client AWS account if they are for a client with sensitivities around IP or data, _or_ if we are doing production hosting. All environments for all related projects should go into this account
+
+### Specific Project or workstream accounts
+
+A Specific Project or Stream AWS account is only merited in two cases:
+
+- if we are doing production hosting for a client billing entity that's distinct from the rest of the client organisation. All related environments should go into this account
+- If we have a project with a Specific Project Production account - in this case all nonproduction environments for that project should go here
+
+### Specific Project Production accounts
+
+​
+Projects should get a Specific Project Production AWS account only if they are very sensitive (data or IP) _and_ if we are doing production hosting. Only a single project environment should be in this account, for security reasons.
+
+## GCP account structure
+
+With GCP each project should get a distinct Project, with all resources under that same entity, except for sensitive projects that may want the production environment split off.
 
 # Drawbacks
 
