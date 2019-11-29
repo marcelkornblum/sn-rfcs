@@ -24,6 +24,19 @@ dashlane
 
 ### Setting up a new AWS account
 
+Log into the Master AWS account as an administrator
+Go to [Organization](https://console.aws.amazon.com/organizations/home) page
+Add Account > Create account
+**Use a group email - should be developers+something@**
+Wait a minute until it's crerated, then switch to the new account using the OrganizationAccountAccessRole whichb gives admin privs on that account
+Go to IAM > Roles > Create a Role
+Trusted entity > Another AWS Account > ID: (the master account), Require MFA [tick]
+Add policy ViewOnlyAccess
+Call it (the same role as this one on the other accounts) so all devs automatically have access to it
+Post the switch role URL on the #perm-tech channel (using the developer access role you just made)
+
+
+
 ### Setting up a new GCP project
 
 ### Static hosting on AWS
