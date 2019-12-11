@@ -14,6 +14,7 @@ We typically use one (or both) of [AWS](https://aws.amazon.com/) and [GCP](https
 
 [guide-level-explanation]: #guide-level-explanation
 
+## Setting up a new project
 
 ### Secrets
 
@@ -26,8 +27,6 @@ dashlane
 ### Setting up a new GCP project
 
 ### Static hosting on AWS
-
-## Setting up a new project
 
 For a static project, or the static part of a larger project (assuming AWS for now), you will need to do as follows.
 
