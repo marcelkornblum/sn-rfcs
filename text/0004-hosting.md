@@ -41,6 +41,67 @@ Post the switch role URL on the #perm-tech channel (using the developer access r
 
 ### Static hosting on AWS
 
+For a static project, or the static part of a larger project (assuming AWS for now), you will need to do as follows.
+
+Preview and PR environments can all be hosted in subfolders of a bucket (or you'd get hundreds). You could also put staging and test in the same `nonproduction` setup for ease, or keep staging separate as a more faithful mirror of production. Then
+
+* Choose the right AWS account
+* Get the <name> together, in the format <projectnumber>-<projectname>-<environment> (you will also need <clientname> if you're on a shared account)
+* Create a S3 bucket with <name>, making sure you don't block all public access (uncheck the box in the creation wizard, leave all other settings the default)
+* Create a CloudFront distribution if you need one (you do for production, probably also for staging). If you are not making a CF distro, you need to set up website hositng on the bucket. 
+* Your distro should reference the bucket API url (the only one if you havent set up website hosting) as the origin. You can leave everything else default unless:
+  * you have data loading at runtime from the bucket and need CORS - if so you need to whitelist the `Origin`, `Accept-...` and `Accept...` headers and allow GET and HEAD requests. You should probably also add a CORS config to the bucket itself
+  * you want to save some money by making the CF distro europe-wide only
+* Make sure your distro uses the comment field to put the project name and the ENVIRONMENT 
+* in IAM create a policy with <name> and set the following (note the <variables> you need to switch out :
+```json
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObjectAcl",
+                "s3:PutObject",
+                "s3:GetObjectAcl",
+                "s3:GetObject",
+                "cloudfront:GetDistribution",
+                "s3:GetBucketWebsite",
+                "s3:DeleteObject",
+                "s3:GetBucketAcl",
+                "s3:GetBucketPolicy",
+                "cloudfront:CreateInvalidation"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<name>/*",
+                "arn:aws:s3:::<name>n",
+                "arn:aws:cloudfront::<accountId>:distribution/<cfDistroId>"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "cloudfront:ListDistributions"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}
+```
+* Create a user with <name> and assign it the policy you just made. Give it programmatic access and save the key and secret 
+* Add the new policy to the Role that developers use to access this account from the master on
+
+Set up CI using the key and secrets (you should have at least two: production and non-production, and perhaps more per-environment). Test a CI build and make sure it puts the right code in the right place and that it's accessible via the CF endpoint.
+
+If necessary, you will then need to go to ACM and set up a SSL certificate (in the N Virginia us-east-1 region) for your custom domains. Once it's verified, go back to the CF distro, add the SSL certificate and specify your CNAMEs for the custom domains.
+
+Profit
+
 ### Static hosting on GCP
 
 ### Dynamic hosting on AWS
