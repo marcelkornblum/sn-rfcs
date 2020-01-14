@@ -64,7 +64,6 @@ Next, you'll need to set up your project environments. Usually you'll benefit by
 
 You'll probably be setting up your CI/CD pipeline at the same time as your hosting; if not make sure you take notes of secret keys and credentials as you go, but that you **[manage them properly](#secrets)**.
 
-
 ## Static hosting on AWS
 [Static Hosting on AWS]: #static-hosting-aws
 
@@ -108,15 +107,43 @@ First, you can simply follow the bucket creation wizard, accepting all the defau
 
 You may want to upload a file, just to have something to test your setup on.
 
-Once you have a bucket, check if your site requires CORS (if you're loading files at runtime there's a decent chance you'll end up needing it) - if so, now is the time to set it up **<< TODO**
+Once you have a bucket, check if your site requires CORS (if you're loading files at runtime there's a decent chance you'll end up needing it) - if so, now is the time to set it up. In the bucket Permissions > CORS configuration, add the following (tweak the specific settings to be less permissive in production, by e.g. specifying domain names):
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  <CORSRule>
+    <AllowedOrigin>*</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+  </CORSRule>
+</CORSConfiguration>
+```
 
 If you **are using Cloudfront** for this environment, you ar done for this step and can move on. Otherwise, there are a few more things to do.
 
-**TODO**
-* Website hosting
-* CORS (above)
-* Bucket policy
-* test you can see it
+Next, enable S3 website hosting in the bucket Properties > Static website hosting dialog, by selecting Use this bucket to host a website, and specifying `index.html` as the Index document (which will enable the save button). 
+
+Make a note of the endpoint published on the following screen, and note that if you are sharing this bucket between environments your site root will be a folder inside the bucket (e.g. `http://<name>.s3-website.eu-west-1.amazonaws.com/<environment>/`).
+
+In the bucket Permissions > Bucket Policy, you may want to add the following to automatically make all content public. If you don't do this you'll need to make sure each file is made public individually:
+
+```json
+{
+    "Version": "2008-10-17",
+    "Id": "Policy1397632521960",
+    "Statement": [
+        {
+            "Sid": "Stmt1397633323327",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::<name>/*"
+        }
+    ]
+}
+```
 
 Lastly, go to the website endpoint you noted earlier and check that you can see the file you uploaded.
 
@@ -183,6 +210,7 @@ In IAM create a Policy called `<name>` and paste the following JSON into the edi
                 "arn:aws:s3:::<name>/*",
                 "arn:aws:s3:::<name>",
                 "arn:aws:cloudfront::<AccountId>:distribution/<CloudFrontDistributionId>"
+
             ]
         },
         {
