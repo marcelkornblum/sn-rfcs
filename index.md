@@ -10,7 +10,7 @@ You should start by reading about our [Git Workflow](./text/0001-git-workflow) a
 
 When you're working on a project with Javascript, please follow the [Linting and Formatting](./text/0002-tooling-linting-formatting) guide.
 
-For reference, all the approved RCFs are listed here:
+For reference, all the approved RFCs are listed here:
 
 * [0001 Git Workflow](./text/0001-git-workflow)
 * [0002 JS Tooling - Linting and Formatting](./text/0002-tooling-linting-formatting)
