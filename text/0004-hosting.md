@@ -18,12 +18,13 @@ Jump straight to the section that is most relevant, or (preferably) read through
 
 * [Choosing between AWS and GCP]
 * [Setting up a new project]
-* [Static Hosting on AWS](#static-hosting-aws)
-* [Static Hosting on GCP](#static-hosting-gcp)
-* [Dynamic Hosting on AWS](#dynamic-hosting-aws)
-* [Dynamic Hosting on GCP](#dynamic-hosting-gcp)
-* [Setting up a new AWS account](#setting-up-aws-acc)
-* [Setting up a new GCP project](#setting-up-gcp-proj)
+* [Static Hosting on AWS]
+* [Static Hosting on GCP]
+* [Dynamic Hosting on AWS]
+* [Dynamic Hosting on GCP]
+* [Setting up a new AWS account]
+* [Setting up a new GCP project]
+* [Accessing resources]
 
 
 ## Choosing between AWS and GCP
@@ -67,7 +68,9 @@ You'll probably be setting up your CI/CD pipeline at the same time as your hosti
 ## Static hosting on AWS
 [Static Hosting on AWS]: #static-hosting-aws
 
-To set up hosting a static project, or the static part of a larger project on AWS, you will need to follow this section. There are a few ways of achieving a static hosting setup and we usually do slightly different things for different environments...
+To set up hosting a static project, or the static part of a larger project on AWS, you will need to follow this section. It seems daunting at first but once you know what you doing it should take no more than an hour or two.
+
+There are a few ways of achieving a static hosting setup and we usually do slightly different things for different environments...
 
 For _Production_ we use S3 for file hosting, with CloudFront doing all the jobs of a webserver. We keep all credentials and permissions for the production environment separate to other environments.
 
@@ -85,7 +88,7 @@ _Preview_ and _PR_ environments can all be hosted in subfolders of a single S3 b
 | _Preview_ | Shared | Yes | No | Shared 'non-production' |
 | _PR_ | Shared | Yes | No | Shared 'non-production' |
 
-Then, making sure you [choose the right AWS account](#aws-account-structure) for your project and environment, you need to follow the below instructions for each environment you'll need.
+Then, making sure you [choose the right AWS account](#account-folder-structure) for your project and environment, you need to follow the below instructions for each environment you'll need.
 
 ### Get your environment name
 
@@ -93,7 +96,7 @@ You need a unique name (which we'll refer to in this document as `<name>`) that 
  
 We use the format `<projectnumber>-<projectname>-<environment>` if you're on a single-client AWS account, and making a single-environment resource. An example might be `1234-explainingdatawebsite-production`. 
 
-On a [shared AWS account](#aws-account-structure) the format should be `<projectnumber>-<clientname>-<projectname>-<environment>`, for example `1234-teg-explainingdatawebsite-production`.
+On a [shared AWS account](#account-folder-structure) the format should be `<projectnumber>-<clientname>-<projectname>-<environment>`, for example `1234-teg-explainingdatawebsite-production`.
 
 If you're making a shared resource (e.g. a security policy covering more than one environment) you may end up with a name along the lines of `1234-teg-explainingdatawebsite-nonproduction`.
 
@@ -101,35 +104,51 @@ If you're making a shared resource (e.g. a security policy covering more than on
 
 Create an S3 bucket called whichever `<name>` you are using for this environment, described above.
 
-If you **are using Cloudfront** for this environment, you can simply follow the bucket creation wizard, accepting all the default options and then move on to the next step (unless you need to setup CORS for the site, in which case there's a bit on that below).
+First, you can simply follow the bucket creation wizard, accepting all the default options, except that you should make sure not to block all public access as you're going to be hosting directly from the bucket (just uncheck the box in the creation wizard). You may want to avoid this in a a few cases (e.g. if you are setting up [OAI access via CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)) but usually you'll want the content publicly accessible.
 
-However, if (based on the table above) you're **not using CloudFront** for this environment, there are a few more steps while creating the bucket.
+You may want to upload a file, just to have something to test your setup on.
 
-First, you should make sure not to block all public access as you're going to be hosting directly from the bucket (uncheck the box in the creation wizard, but you can leave all other settings the default).
+Once you have a bucket, check if your site requires CORS (if you're loading files at runtime there's a decent chance you'll end up needing it) - if so, now is the time to set it up **<< TODO**
 
+If you **are using Cloudfront** for this environment, you ar done for this step and can move on. Otherwise, there are a few more things to do.
+
+**TODO**
 * Website hosting
-* CORS
+* CORS (above)
 * Bucket policy
-
 * test you can see it
+
+Lastly, go to the website endpoint you noted earlier and check that you can see the file you uploaded.
 
 ### Set up your CloudFront Distribution
 
-Skip this step if you aren't making a production or staging environment. Otherwise, use the following settings unless you know what you're doing.
+Skip this step if you aren't making a production or staging environment. Otherwise, use the following settings unless you know what you're doing (anything that isn't mentioned is usually best left untouched).
 
-* Your Origin should be the bucket API url (this will be the only one for that bucket that turns up in the dropdown box if you've not enabled website hosting for this environment).
-* If your site loads data at runtime you may need CORS set up. If so, you need to do a few extra things:
-  * Whitelist the following headers:
+1. Your Origin should be the bucket API url (this will be the only one for that bucket that turns up in the dropdown box if you've not enabled website hosting for this environment).
+2. You should probably set _Viewer Protocol Policy_ to `Redirect HTTP to HTTPS`
+3. If your site loads data at runtime you may need CORS set up. If so, you need to do [a few extra things](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/header-caching.html#header-caching-web-cors):
+  * In the Behaviours section, select `GET, HEAD, OPTIONS` under _Allowed HTTP Methods_
+  * In the Behaviours section, set _Cache Based on Selected Request Headers_ to `Whitelist`, and then select the following headers:
     * `Origin`
-    * ``
-    * ``
-  * Allow GET and HEAD requests
-  * Ensure you have CORS set up on the bucket
-* Check the geographical support of your distribution and just use the smallest area you'll realistically need (though this isn't really critical)
-* It's really important to make sure you use the comment field to put the project name and ENVIRONMENT; when scanning a list of CloudFront distributions this is by far the easiest way to see which is which
+    * `Access-Control-Request-Headers`
+    * `Access-Control-Request-Method`
+  * Ensure you have CORS set up on the bucket (see above)
+4. Optionally change the default cache times
+5. Optionally set _Price Class_ to something cheaper than `All Edge Locations`
 
+**NB.** It's really important to make sure you use the comment field to put the project name and ENVIRONMENT; when scanning a list of CloudFront distributions this is by far the easiest way to see which is which. It's also searchable.
 
-* test you can see it
+Lastly, go to the Cloudfront distribution URL (https://xxxx.cloudfront.net) and check you can see your content.
+
+### Set up your custom domain
+
+This only works if you've set up CloudFront - if you are only using S3 website hosting you can't have a custom domain.
+
+**TODO**
+
+link to [Domains] about buying and DNS
+
+If necessary, you will then need to go to ACM and set up a SSL certificate (in the N Virginia us-east-1 region) for your custom domains. Once it's verified, go back to the CF distro, add the SSL certificate and specify your CNAMEs for the custom domains.
 
 ### Set up the credentials for deploying to your environment
 
@@ -139,10 +158,10 @@ The Policy defines a set of API calls that can be made (either via the CLI or th
 
 The end result will be a custom user that can be invoked by the CI system which has a very limited set of permissions, and also those exact same permissions extended to perm developers on the team where appropriate, along with the permissions from the other environments. Developers accessing resources in this way must do so via secure 2FA logins, and this gives us a balance between pragmatic access to resources and security. For some projects and environments we will not assign the policy to the main developer access role, but keep it separate as a single use role to be assigned to specific individuals.
 
-In IAM create a Policy called `<name>` and paste the following JSON into the editor (note the `<variables>` you need to switch out for real values). If you're not using CloudFront for this environment you can safely delete those lines. If you are using the same credentials for more than one environment, simply add the extra bucket and/or cloudfront lines to the reources section (making sure to have a line for each bucket and another line for `/*` - all the items inside the bucket).
+In IAM create a Policy called `<name>` and paste the following JSON into the editor (note the `<variables>` you need to switch out for real values). 
 
 ```json
-  {
+{
     "Version": "2012-10-17",
     "Statement": [
         {
@@ -163,7 +182,7 @@ In IAM create a Policy called `<name>` and paste the following JSON into the edi
             "Resource": [
                 "arn:aws:s3:::<name>/*",
                 "arn:aws:s3:::<name>",
-                "arn:aws:cloudfront::<accountId>:distribution/<cfDistroId>"
+                "arn:aws:cloudfront::<AccountId>:distribution/<CloudFrontDistributionId>"
             ]
         },
         {
@@ -181,23 +200,37 @@ In IAM create a Policy called `<name>` and paste the following JSON into the edi
 }
 ```
 
-* Create a user with `<name>` and assign it the policy you just made. Give it programmatic access and save the key and secret 
-* Add the new policy to the Role that developers use to access this account from the master on
+**NB.** If you're not using CloudFront for this environment you can safely delete those lines. If you are using the same credentials for more than one environment, simply add the extra bucket and/or cloudfront lines to the reources section (making sure to have a line for each bucket and another line for `/*` - all the items inside the bucket).
 
-Set up CI using the key and secrets (you should have at least two: production and non-production, and perhaps more per-environment). Test a CI build and make sure it puts the right code in the right place and that it's accessible via the CF endpoint.
+Next, still in IAM, create a user also called `<name>`, and assign it the policy you just made. Give it programmatic access and mane a note of the key and secret (but make sure the note can be deleted later; you don't want this in a repo, a chat message or anything persistent). This is the user the CI system will use to deploy your front end.
 
-If necessary, you will then need to go to ACM and set up a SSL certificate (in the N Virginia us-east-1 region) for your custom domains. Once it's verified, go back to the CF distro, add the SSL certificate and specify your CNAMEs for the custom domains.
+The next step is making easy for perm Signal Noise devs to perform the same operations as the use you've just made. Simply attach the new Policy to the DeveloperAccessFromMaster Role that you should find in IAM if the account was set up according to these instructions. Note that for high security environments you may not want to perform this step, or you may want to attach the policy to a custom role not available to all developers. 
 
-Profit
+Lastly, [set up CI](./0003-continuous-integration) using the key and secrets you noted above (you should have at least two: production and non-production, and perhaps more per-environment). Test a CI build and make sure it puts the right code in the right place and that it's accessible via the CF endpoint.
 
 ### Static hosting on GCP
 [Static Hosting on GCP]: #static-hosting-gcp
 
+We often use GCP for hosting static projects, or the non-production environments of static projects, since the [AppEngine](https://cloud.google.com/appengine/) service gives the following easy-to-setup benefits over e.g. AWS S3:
+* Free HTTPS endpoint with no setup (for a non-custom domain)
+* Access controls, allowing only specified people, or e.g. only Signal Noise employees, to access the project, with no extra code
+* Easy concurrent version hosting, making CI integration simple and painless
+
+If you want a high performance static front end you should follow the [official tutorial](https://cloud.google.com/storage/docs/hosting-static-website), but to use our common GAE setup you need to follow these instructions.
+
+**TODO**
+
 ### Dynamic hosting on AWS
 [Dynamic Hosting on AWS]: #dynamic-hosting-aws
 
+The main rule about dynamic back ends on AWS or GCP is write your code within a docker container, since it reduces maintenance overhead and increases portability, even if you code specifically for AWS. Since ElasticBeanstalk has very poor support for containers (it uses ECS in a very inflexible way that causes a lot of headaches), the best options are ECS or EKS directly, or for small projects to use Lambdas.
+
+These are all outside the scope of this document since they become very involved and project-specific, but if using containers please conside the Fargate runtime for jobs that need to remain available but get very low traffic (such as non-production environments).
+
 ### Dynamic hosting on GCP
 [Dynamic Hosting on GCP]: #dynamic-hosting-gcp
+
+The main rule about dynamic back ends on AWS or GCP is write your code within a docker container, since it reduces maintenance overhead and increases portability, even if you code specifically for GCP. This rules out AppEngine as a general approach and ideally GKS would be the service of choice, but we've also had some success using Cloud Run for jobs that need to remain available but get very low traffic (such as non-production environments).
 
 ### Setting up a new AWS account
 [Setting up a new AWS account]: #setting-up-aws-acc
@@ -216,22 +249,19 @@ Post the switch role URL on the #perm-tech channel (using the developer access r
 ### Setting up a new GCP project
 [Setting up a new GCP project]: #setting-up-gcp-proj
 
-We often use GCP for hosting static projects, or the non-production environments of static projects, since the [AppEngine](https://cloud.google.com/appengine/) service gives the following easy-to-setup benefits over e.g. AWS S3:
-* Free HTTPS endpoint with no setup (for a non-custom domain)
-* Access controls, allowing only specified people, or e.g. only Signal Noise employees, to access the project, with no extra code
-* Easy concurrent version hosting, making CI integration simple and painless
+
 
 ## Accessing resources
-
-### AWS
-
-### GCP
+[Accessing resources]: #accessing-resources
 
 # Reference-level explanation
 [Reference-level explanation]: #reference-level-explanation
 
+* [Secrets]
+* [Domains]
+* [Account or folder structure]
 
-### Secrets
+## Secrets
 [Secrets]: #secrets
 
 .env
@@ -239,13 +269,14 @@ We often use GCP for hosting static projects, or the non-production environments
 dashlane
 
 ## Domains
+[Domains]: #domains
 
-## AWS account structure
-[AWS account structure]: #aws-account-structure
+## Account or folder structure
+[Account or folder structure]: #account-folder-structure
 
-We have multiple AWS accounts set up as parts of an [AWS Organisation](https://aws.amazon.com/organizations/). This allows us to improve security for specific projects and across client hosting, as well as to make project billing simpler and clearer.
+On GCP we use folders to group projects for security access reasons, on AWS we use multiple accounts set up as parts of an [AWS Organisation](https://aws.amazon.com/organizations/). This allows us to improve security for specific projects and across client hosting, as well as to make project billing simpler and clearer.
 
-The AWS accounts we run are:
+In either case the rationale for where a project should go is the same, and the folder or account should be named the same way. We use the shorthand of account below but on GCP we're referring to Folders under the IAM Managing Resources section:
 
 ### Master
 
@@ -261,7 +292,7 @@ For projects where we are the client - internal tooling, "FTP", internal project
 
 ### Legacy
 
-(to be shut down)
+This is to be shut down after all current projects are migrated away.
 
 ### Development
 
@@ -280,12 +311,7 @@ A Specific Project or Stream AWS account is only merited in two cases:
 
 ### Specific Project Production accounts
 
-​
 Projects should get a Specific Project Production AWS account only if they are very sensitive (data or IP) _and_ if we are doing production hosting. Only a single project environment should be in this account, for security reasons.
-
-## GCP account structure
-
-With GCP each project should get a distinct Project, with all resources under that same entity, except for sensitive projects that may want the production environment split off.
 
 # Drawbacks
 [Drawbacks]: #drawbacks
