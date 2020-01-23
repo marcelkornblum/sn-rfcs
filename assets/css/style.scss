@@ -2,3 +2,50 @@
 ---
 
 @import "{{ site.theme }}";
+
+html {
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+a {
+  color: #fa6a76;
+}
+
+.page-header {
+  background-color: rgb(11, 12, 33);
+  background-image: none;
+}
+
+.page-header a {
+  color: #fff;
+}
+
+.page-header a:hover {
+  text-decoration: none;
+}
+
+.project-tagline {
+  margin-bottom: none;
+}
+
+.main-content h1, 
+.main-content h2, 
+.main-content h3, 
+.main-content h4, 
+.main-content h5, 
+.main-content h6 {
+  color: rgb(11, 12, 33);
+}
+
+@media screen and (min-width: 64em)
+.page-header {
+    padding: 3rem 6rem;
+}
+@media screen and (max-width: 64em) and (min-width: 42em)
+.page-header {
+    padding: 1rem 4rem;
+}
+@media screen and (max-width: 42em)
+.page-header {
+    padding: 1rem 1rem;
+}
