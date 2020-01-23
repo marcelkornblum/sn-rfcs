@@ -1,53 +1,108 @@
 - Feature Name: `hosting`
 - Start Date: 2019-11-23
-- RFC PR: [signal-noise/rfcs#0000](https://github.com/signal-noise/rfcs/pull/0000)
+- RFC PR: [signal-noise/rfcs#0006](https://github.com/signal-noise/rfcs/pull/0006)
 
 # Summary
-
 [summary]: #summary
 
-A rundown of the common approaches to hosting used at Signal Noise, along with guidance about when to choose different setups and how to go about creating a new project.
+A rundown of the common approaches to hosting used at Signal Noise, along with guidance about when to choose different setups and how to go about creating a new project. Note that this is not exhaustive and shouldn't be seen as a replacement for choosing the right setup and/or settings for your project's needs; it's more of a guide to our default approach.
 
 We typically use one (or both) of [AWS](https://aws.amazon.com/) and [GCP](https://cloud.google.com/) for hosting when possible. We also have legacy projects on other platforms including Heroku but they are not discussed in this document.
 
-# Guide-level explanation
+If you're interested in the general rules please jump straight to the [Reference-level explanation]; otherwise read on for guidance for specific situations you may be in.
 
-[guide-level-explanation]: #guide-level-explanation
+# Guide-level explanation
+[Guide-level explanation]: #guide-level-explanation
+
+Jump straight to the section that is most relevant, or (preferably) read through them all first:
+
+* [Choosing between AWS and GCP]
+* [Setting up a new project]
+* [Static Hosting on AWS]
+* [Static Hosting on GCP]
+* [Dynamic Hosting on AWS]
+* [Dynamic Hosting on GCP]
+* [Setting up a new AWS account]
+* [Setting up a new GCP project]
+
+
+## Choosing between AWS and GCP
+[Choosing between AWS and GCP]: #choosing-aws-gcp
+
+In general terms, AWS and GCP have near parity in terms of features they offer, and usually the choice of which to take has no serious technical weight. That said, there are some circumstances which make one or the other a better choice for your project, should the client not be mandating which platform you use.
+
+Ideally, we write code that is able to painlessly be hosted on services provided by any major hosting platform, but in real life there are reasons to create projects that are opinionated about where they are hosted. 
+
+If you're building a project which will run as a static site (or you're confident that it'll be easily hosted elsewhere; perhaps you're using Kubernetes), there's no reason not to use GCP for pre-production environments and AWS for production (and some reasons that is a good idea, see below).
+
+You might choose AWS for your project / environment if:
+* Your production environment has to be on AWS (perhaps it's client mandated)
+* You are using a service provided by AWS without a close analogue on GCP (especially e.g. an Alexa service)
+* You are using a tool or toolchain that is AWS-specific
+* The people involved in the day to day on the project are more comfortable with AWS
+
+You might choose GCP for your project / environment if:
+* Your production environment has to be on GCP (perhaps it's client mandated)
+* Your project hosting requirement is [static files](#static-hosting-gcp) only
+* You are using a service provided by GCP without a close analogue on AWS (especially e.g. an ML service)
+* You are using a tool or toolchain that is GCP-specific
+* The people involved in the day to day on the project are more comfortable with GCP
+
+All else being equal, we usually prefer GCP over AWS since it involves less management overhead:
+* The management of projects and billing is clearer, easier and takes less time
+* The management of project resources is simpler, taking into account pricing structures and security optimisation
 
 ## Setting up a new project
+[Setting up a new project]: #setting-up-project
 
-### Secrets
+When setting up a new project, the first thing to consider is the hosting provider or combination of providers. A common scenario is to use GCP for non-production hosting, with AWS for production and staging environments.
 
-.env
+If using AWS, the second step is to check whether an existing AWS account would be appropriate for your project, or if you need to set up a new account before proceeding.
 
-dashlane
+Next, you'll need to set up your project environments. Usually you'll benefit by setting them all up at the same time (generally you'll want one for each of the environments set out in our [CI/CD approach](./0003-continuous-integration.html), including a way to have unlimited PR environments).
 
-### Setting up a new AWS account
-
-Log into the Master AWS account as an administrator
-Go to [Organization](https://console.aws.amazon.com/organizations/home) page
-Add Account > Create account
-**Use a group email - should be developers+something@**
-Wait a minute until it's crerated, then switch to the new account using the OrganizationAccountAccessRole whichb gives admin privs on that account
-Go to IAM > Roles > Create a Role
-Trusted entity > Another AWS Account > ID: (the master account), Require MFA [tick]
-Add policy ViewOnlyAccess
-Call it (the same role as this one on the other accounts) so all devs automatically have access to it
-Post the switch role URL on the #perm-tech channel (using the developer access role you just made)
+You'll probably be setting up your CI/CD pipeline at the same time as your hosting; if not make sure you take notes of secret keys and credentials as you go, but that you **[manage them properly](#secrets)**.
 
 
+## Static hosting on AWS
+[Static Hosting on AWS]: #static-hosting-aws
 
-### Setting up a new GCP project
+To set up hosting a static project, or the static part of a larger project on AWS, you will need to follow this section. There are a few ways of achieving a static hosting setup and we usually do slightly different things for different environments...
 
-### Static hosting on AWS
+For _Production_ we use S3 for file hosting, with CloudFront doing all the jobs of a webserver. We keep all credentials and permissions for the production environment separate to other environments.
 
-For a static project, or the static part of a larger project (assuming AWS for now), you will need to do as follows.
+For a _Staging_ environment we use the same S3 & CloudFront setup as production, but we generally make a single set of credentials and permissions to cover all non-production environments, for the sake of quicker setup and lower maintenance overhead.
 
-Preview and PR environments can all be hosted in subfolders of a bucket (or you'd get hundreds). You could also put staging and test in the same `nonproduction` setup for ease, or keep staging separate as a more faithful mirror of production. Then
+_Test_ environments are usually set up using an S3 bucket with website hosting enabled but no CloudFront, as CF adds an extra layer of management as well as a longer wait (and extra complication) during deployments. 
 
-* Choose the right AWS account
-* Get the <name> together, in the format <projectnumber>-<projectname>-<environment> (you will also need <clientname> if you're on a shared account)
-* Create a S3 bucket with <name>, making sure you don't block all public access (uncheck the box in the creation wizard, leave all other settings the default)
+_Preview_ and _PR_ environments can all be hosted in subfolders of a single S3 bucket (to avoid making potentially hundreds of buckets), again with S3 website hosting and no CloudFront setup. You can also setup _Test_ in the same way as these environments, to further reduce overhead. 
+
+| Environment | S3 Bucket | Bucket website hosting | CloudFront setup | Security setup |
+| --- | --- | --- | --- | --- |
+| _Production_ | Dedicated | No | Yes | Dedicated |
+| _Staging_ | Dedicated | No | Yes | Shared 'non-production' |
+| _Test_ | Optional | Yes | No | Shared 'non-production' |
+| _Preview_ | Shared | Yes | No | Shared 'non-production' |
+| _PR_ | Shared | Yes | No | Shared 'non-production' |
+
+Then, making sure you [choose the right AWS account](#aws-account-structure) for your project and environment, you need to follow the below instructions for each environment you'll need.
+
+### Get your environment name
+
+You need a unique name (which we'll refer to in this document as `<name>`) that will identify resources for this environment.  
+ 
+We use the format `<projectnumber>-<projectname>-<environment>` if you're on a single-client AWS account, and making a single-environment resource. An example might be `1234-explainingdatawebsite-production`. 
+
+On a [shared AWS account](#aws-account-structure) the format should be `<projectnumber>-<clientname>-<projectname>-<environment>`, for example `1234-teg-explainingdatawebsite-production`.
+
+If you're making a shared resource (e.g. a security policy covering more than one environment) you may end up with a name along the lines of `1234-teg-explainingdatawebsite-nonproduction`.
+
+### Set up your S3 Bucket
+
+Create an S3 bucket called whichever `<name>` you are using for this environment, described above.
+
+If you're **not using Cloudfront** for this environment, you should make sure not to block all public access as you're going to be hosting directly from the bucket (uncheck the box in the creation wizard, leave all other settings the default).
+
 * Create a CloudFront distribution if you need one (you do for production, probably also for staging). If you are not making a CF distro, you need to set up website hositng on the bucket. 
 * Your distro should reference the bucket API url (the only one if you havent set up website hosting) as the origin. You can leave everything else default unless:
   * you have data loading at runtime from the bucket and need CORS - if so you need to whitelist the `Origin`, `Accept-...` and `Accept...` headers and allow GET and HEAD requests. You should probably also add a CORS config to the bucket itself
@@ -103,10 +158,35 @@ If necessary, you will then need to go to ACM and set up a SSL certificate (in t
 Profit
 
 ### Static hosting on GCP
+[Static Hosting on GCP]: #static-hosting-gcp
 
 ### Dynamic hosting on AWS
+[Dynamic Hosting on AWS]: #dynamic-hosting-aws
 
 ### Dynamic hosting on GCP
+[Dynamic Hosting on GCP]: #dynamic-hosting-gcp
+
+### Setting up a new AWS account
+[Setting up a new AWS account]: #setting-up-aws-acc
+
+Log into the Master AWS account as an administrator
+Go to [Organization](https://console.aws.amazon.com/organizations/home) page
+Add Account > Create account
+**Use a group email - should be developers+something@**
+Wait a minute until it's crerated, then switch to the new account using the OrganizationAccountAccessRole whichb gives admin privs on that account
+Go to IAM > Roles > Create a Role
+Trusted entity > Another AWS Account > ID: (the master account), Require MFA [tick]
+Add policy ViewOnlyAccess
+Call it (the same role as this one on the other accounts) so all devs automatically have access to it
+Post the switch role URL on the #perm-tech channel (using the developer access role you just made)
+
+### Setting up a new GCP project
+[Setting up a new GCP project]: #setting-up-gcp-proj
+
+We often use GCP for hosting static projects, or the non-production environments of static projects, since the [AppEngine](https://cloud.google.com/appengine/) service gives the following easy-to-setup benefits over e.g. AWS S3:
+* Free HTTPS endpoint with no setup (for a non-custom domain)
+* Access controls, allowing only specified people, or e.g. only Signal Noise employees, to access the project, with no extra code
+* Easy concurrent version hosting, making CI integration simple and painless
 
 ## Accessing resources
 
@@ -115,12 +195,20 @@ Profit
 ### GCP
 
 # Reference-level explanation
+[Reference-level explanation]: #reference-level-explanation
 
-[reference-level-explanation]: #reference-level-explanation
+
+### Secrets
+[Secrets]: #secrets
+
+.env
+
+dashlane
 
 ## Domains
 
 ## AWS account structure
+[AWS account structure]: #aws-account-structure
 
 We have multiple AWS accounts set up as parts of an [AWS Organisation](https://aws.amazon.com/organizations/). This allows us to improve security for specific projects and across client hosting, as well as to make project billing simpler and clearer.
 
@@ -167,22 +255,19 @@ Projects should get a Specific Project Production AWS account only if they are v
 With GCP each project should get a distinct Project, with all resources under that same entity, except for sensitive projects that may want the production environment split off.
 
 # Drawbacks
-
-[drawbacks]: #drawbacks
+[Drawbacks]: #drawbacks
 
 Why should we _not_ do this?
 
 # Rationale and alternatives
-
-[rationale-and-alternatives]: #rationale-and-alternatives
+[Rationale and alternatives]: #rationale-and-alternatives
 
 - Why is this approach the best in the space of possible approaches?
 - What other approaches have been considered and what is the rationale for not choosing them?
 - What is the impact of not doing this?
 
 # Prior art
-
-[prior-art]: #prior-art
+[Prior art]: #prior-art
 
 Discuss prior art, both the good and the bad, in relation to this proposal.
 A few examples of what this can include are:
@@ -198,16 +283,14 @@ Note that while precedent set by other companies or teams is some motivation, it
 Please also take into consideration that Signal Noise sometimes intentionally diverges from common approaches.
 
 # Unresolved questions
-
-[unresolved-questions]: #unresolved-questions
+[Unresolved questions]: #unresolved-questions
 
 - What parts of the approach do you expect to resolve through the RFC process before this gets merged?
 - What parts of the approach do you expect to resolve through the implementation of this feature before stabilization?
 - What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
 
 # Future possibilities
-
-[future-possibilities]: #future-possibilities
+[Future possibilities]: #future-possibilities
 
 Think about what the natural extension and evolution of your proposal would
 be and how it would affect the company as a whole in a holistic
