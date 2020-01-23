@@ -2,32 +2,25 @@
 ---
 
 @import "{{ site.theme }}";
-
 html {
   font-family: "IBM Plex Sans", sans-serif;
 }
-
 a {
   color: #fa6a76;
 }
-
 .page-header {
   background-color: rgb(11, 12, 33);
   background-image: none;
 }
-
 .page-header a {
   color: #fff;
 }
-
 .page-header a:hover {
   text-decoration: none;
 }
-
 .project-tagline {
   margin-bottom: none;
 }
-
 .main-content h1, 
 .main-content h2, 
 .main-content h3, 
@@ -36,7 +29,6 @@ a {
 .main-content h6 {
   color: rgb(11, 12, 33);
 }
-
 @media screen and (min-width: 64em)
 .page-header {
     padding: 3rem 6rem;
