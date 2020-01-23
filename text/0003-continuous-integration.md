@@ -92,7 +92,7 @@ Setting up the tooling on a new project requires configuration of a few distinct
 
 The first step is to configure the project infrastructure, allowing for (hopefully all) the standard [environments].
 
-Note that with PR builds you may end up with hundreds of individual environments, and will need a way to manage this. For static sites, Google AppEngine is a good solution to this, while using subfolders of a single AWS S3 bucket will also often work, although HTTPS and password protection can be tricky. See the [Hosting RFC](./0004-hosting.md) for more details.
+Note that with PR builds you may end up with hundreds of individual environments, and will need a way to manage this. For static sites, Google AppEngine is a good solution to this, while using subfolders of a single AWS S3 bucket will also often work, although HTTPS and password protection can be tricky. See the [Hosting RFC](./0004-hosting) for more details.
 
 ### Build
 
