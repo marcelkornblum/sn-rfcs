@@ -16,8 +16,8 @@ If you're interested in the general rules please jump straight to the [Reference
 
 Jump straight to the section that is most relevant, or (preferably) read through them all first:
 
-* [Choosing between AWS and GCP](#choosing-aws-gcp)
-* [Setting up a new project](#setting-up-project)
+* [Choosing between AWS and GCP]
+* [Setting up a new project]
 * [Static Hosting on AWS](#static-hosting-aws)
 * [Static Hosting on GCP](#static-hosting-gcp)
 * [Dynamic Hosting on AWS](#dynamic-hosting-aws)
