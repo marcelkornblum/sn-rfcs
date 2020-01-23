@@ -1,6 +1,6 @@
 # Signal Noise RFCs
 
-[Active RFCs](https://signal-noise.github.io/rfcs)
+[👉 Public site](https://signal-noise.github.io/rfcs) where all approved RFCs are visible.
 
 Many aspects of the way we do things at Signal Noise merit being 
 standardised. By documenting workflows, techniques and tools that we as a 
