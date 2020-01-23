@@ -16,14 +16,14 @@ If you're interested in the general rules please jump straight to the [Reference
 
 Jump straight to the section that is most relevant, or (preferably) read through them all first:
 
-* [Choosing between AWS and GCP]
-* [Setting up a new project]
-* [Static Hosting on AWS]
-* [Static Hosting on GCP]
-* [Dynamic Hosting on AWS]
-* [Dynamic Hosting on GCP]
-* [Setting up a new AWS account]
-* [Setting up a new GCP project]
+* [Choosing between AWS and GCP](#choosing-aws-gcp)
+* [Setting up a new project](#setting-up-project)
+* [Static Hosting on AWS](#static-hosting-aws)
+* [Static Hosting on GCP](#static-hosting-gcp)
+* [Dynamic Hosting on AWS](#dynamic-hosting-aws)
+* [Dynamic Hosting on GCP](#dynamic-hosting-gcp)
+* [Setting up a new AWS account](#setting-up-aws-acc)
+* [Setting up a new GCP project](#setting-up-gcp-proj)
 
 
 ## Choosing between AWS and GCP
@@ -59,7 +59,7 @@ When setting up a new project, the first thing to consider is the hosting provid
 
 If using AWS, the second step is to check whether an existing AWS account would be appropriate for your project, or if you need to set up a new account before proceeding.
 
-Next, you'll need to set up your project environments. Usually you'll benefit by setting them all up at the same time (generally you'll want one for each of the environments set out in our [CI/CD approach](./0003-continuous-integration.html), including a way to have unlimited PR environments).
+Next, you'll need to set up your project environments. Usually you'll benefit by setting them all up at the same time (generally you'll want one for each of the environments set out in our [CI/CD approach](./0003-continuous-integration), including a way to have unlimited PR environments).
 
 You'll probably be setting up your CI/CD pipeline at the same time as your hosting; if not make sure you take notes of secret keys and credentials as you go, but that you **[manage them properly](#secrets)**.
 
@@ -101,14 +101,46 @@ If you're making a shared resource (e.g. a security policy covering more than on
 
 Create an S3 bucket called whichever `<name>` you are using for this environment, described above.
 
-If you're **not using Cloudfront** for this environment, you should make sure not to block all public access as you're going to be hosting directly from the bucket (uncheck the box in the creation wizard, leave all other settings the default).
+If you **are using Cloudfront** for this environment, you can simply follow the bucket creation wizard, accepting all the default options and then move on to the next step (unless you need to setup CORS for the site, in which case there's a bit on that below).
 
-* Create a CloudFront distribution if you need one (you do for production, probably also for staging). If you are not making a CF distro, you need to set up website hositng on the bucket. 
-* Your distro should reference the bucket API url (the only one if you havent set up website hosting) as the origin. You can leave everything else default unless:
-  * you have data loading at runtime from the bucket and need CORS - if so you need to whitelist the `Origin`, `Accept-...` and `Accept...` headers and allow GET and HEAD requests. You should probably also add a CORS config to the bucket itself
-  * you want to save some money by making the CF distro europe-wide only
-* Make sure your distro uses the comment field to put the project name and the ENVIRONMENT 
-* in IAM create a policy with <name> and set the following (note the <variables> you need to switch out :
+However, if (based on the table above) you're **not using CloudFront** for this environment, there are a few more steps while creating the bucket.
+
+First, you should make sure not to block all public access as you're going to be hosting directly from the bucket (uncheck the box in the creation wizard, but you can leave all other settings the default).
+
+* Website hosting
+* CORS
+* Bucket policy
+
+* test you can see it
+
+### Set up your CloudFront Distribution
+
+Skip this step if you aren't making a production or staging environment. Otherwise, use the following settings unless you know what you're doing.
+
+* Your Origin should be the bucket API url (this will be the only one for that bucket that turns up in the dropdown box if you've not enabled website hosting for this environment).
+* If your site loads data at runtime you may need CORS set up. If so, you need to do a few extra things:
+  * Whitelist the following headers:
+    * `Origin`
+    * ``
+    * ``
+  * Allow GET and HEAD requests
+  * Ensure you have CORS set up on the bucket
+* Check the geographical support of your distribution and just use the smallest area you'll realistically need (though this isn't really critical)
+* It's really important to make sure you use the comment field to put the project name and ENVIRONMENT; when scanning a list of CloudFront distributions this is by far the easiest way to see which is which
+
+
+* test you can see it
+
+### Set up the credentials for deploying to your environment
+
+We're going to set up an AWS IAM Policy with limited credentials; just enough to deploy to our new static environment. For the sake of pragmatism we usually make a single policy for all non-production environments and a seond set of credentials for production. Some projects require a stronger security posture and a separate set of creds should be made for each.
+
+The Policy defines a set of API calls that can be made (either via the CLI or the Console); we'll associate our policy with a new IAM User created specifically for that purpose, and also with the IAM Role that developers use to access resources, coming from the Master AWS account.
+
+The end result will be a custom user that can be invoked by the CI system which has a very limited set of permissions, and also those exact same permissions extended to perm developers on the team where appropriate, along with the permissions from the other environments. Developers accessing resources in this way must do so via secure 2FA logins, and this gives us a balance between pragmatic access to resources and security. For some projects and environments we will not assign the policy to the main developer access role, but keep it separate as a single use role to be assigned to specific individuals.
+
+In IAM create a Policy called `<name>` and paste the following JSON into the editor (note the `<variables>` you need to switch out for real values). If you're not using CloudFront for this environment you can safely delete those lines. If you are using the same credentials for more than one environment, simply add the extra bucket and/or cloudfront lines to the reources section (making sure to have a line for each bucket and another line for `/*` - all the items inside the bucket).
+
 ```json
   {
     "Version": "2012-10-17",
@@ -130,7 +162,7 @@ If you're **not using Cloudfront** for this environment, you should make sure no
             ],
             "Resource": [
                 "arn:aws:s3:::<name>/*",
-                "arn:aws:s3:::<name>n",
+                "arn:aws:s3:::<name>",
                 "arn:aws:cloudfront::<accountId>:distribution/<cfDistroId>"
             ]
         },
@@ -148,7 +180,8 @@ If you're **not using Cloudfront** for this environment, you should make sure no
     ]
 }
 ```
-* Create a user with <name> and assign it the policy you just made. Give it programmatic access and save the key and secret 
+
+* Create a user with `<name>` and assign it the policy you just made. Give it programmatic access and save the key and secret 
 * Add the new policy to the Role that developers use to access this account from the master on
 
 Set up CI using the key and secrets (you should have at least two: production and non-production, and perhaps more per-environment). Test a CI build and make sure it puts the right code in the right place and that it's accessible via the CF endpoint.
