@@ -1,5 +1,5 @@
 ---
-description: Git Workflow
+title: Git Workflow
 ---
 
 - Feature Name: `git_workflow`
