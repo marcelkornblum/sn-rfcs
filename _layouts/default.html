@@ -22,7 +22,11 @@
   </head>
   <body>
     <header class="page-header" role="banner">
-      <a href="/rfcs"><h1 class="project-name">{{ page.title | default: "Signal Noise RFCs" }}</h1></a>
+      {% if page.title %}
+        <h1 class="project-name"><a href="/rfcs">&larr;</a> {{ page.title }}</h1>
+      {% else %}
+        <h1 class="project-name"><a href="/rfcs">{{ site.title | default: site.github.repository_name }}</a></h1>
+      {% endif %}
       <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
     </header>
 
