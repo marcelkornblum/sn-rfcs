@@ -1,5 +1,6 @@
 ---
 title: Git Workflow
+description: Structuring commits and branches
 ---
 
 - Feature Name: `git_workflow`

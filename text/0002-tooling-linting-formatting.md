@@ -1,3 +1,8 @@
+---
+title: JS linting and formatting
+description: Tools and rules for JS code
+---
+
 - Feature Name: `tooling_javascript_linting_formatting`
 - Start Date: 2019-10-30
 - RFC PR: [signal-noise/rfcs#0004](https://github.com/signal-noise/rfcs/pull/0004)
