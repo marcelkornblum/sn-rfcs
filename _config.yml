@@ -1,4 +1,4 @@
 theme: jekyll-theme-cayman
 title: Signal Noise RFCs
 description: Team-written documentation about how we work
-show_downloads: "false"
+show_downloads: false
