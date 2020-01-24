@@ -1,3 +1,7 @@
+---
+title: Hosting
+description: How we approach hosting on AWS and GCP
+---
 - Feature Name: `hosting`
 - Start Date: 2019-11-23
 - RFC PR: [signal-noise/rfcs#0006](https://github.com/signal-noise/rfcs/pull/0006)
