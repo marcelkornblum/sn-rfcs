@@ -7,8 +7,15 @@ $header-bg-color: rgb(11, 12, 33);
 $header-bg-color-secondary: rgb(11, 12, 33);
 
 @import "{{ site.theme }}";
+
 html {
   font-family: "IBM Plex Sans", sans-serif;
+}
+
+#skip-to-content {
+  &:focus {
+    top: -10px;
+  }
 }
 
 .page-header {
