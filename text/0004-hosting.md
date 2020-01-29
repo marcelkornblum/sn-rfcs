@@ -240,7 +240,7 @@ The next step is making easy for perm Signal Noise devs to perform the same oper
 
 Lastly, [set up CI](./0003-continuous-integration) using the key and secrets you noted above (you should have at least two: production and non-production, and perhaps more per-environment). Test a CI build and make sure it puts the right code in the right place and that it's accessible via the CF endpoint.
 
-### Static hosting on GCP
+## Static hosting on GCP
 [Static Hosting on GCP]: #static-hosting-gcp
 
 We often use GCP for hosting static projects, or the non-production environments of static projects, since the [AppEngine](https://cloud.google.com/appengine/) service gives the following easy-to-setup benefits over e.g. AWS S3:
@@ -251,20 +251,25 @@ We often use GCP for hosting static projects, or the non-production environments
 If you want a high performance static front end you should follow the [official tutorial](https://cloud.google.com/storage/docs/hosting-static-website), but to use our common GAE setup you need to follow these instructions.
 
 **TODO**
+set up project
+enable GAE
+create app.yaml
+push manually to your gae
+integrate CI/CD
 
-### Dynamic hosting on AWS
+## Dynamic hosting on AWS
 [Dynamic Hosting on AWS]: #dynamic-hosting-aws
 
 The main rule about dynamic back ends on AWS or GCP is write your code within a docker container, since it reduces maintenance overhead and increases portability, even if you code specifically for AWS. Since ElasticBeanstalk has very poor support for containers (it uses ECS in a very inflexible way that causes a lot of headaches), the best options are ECS or EKS directly, or for small projects to use Lambdas.
 
 These are all outside the scope of this document since they become very involved and project-specific, but if using containers please conside the Fargate runtime for jobs that need to remain available but get very low traffic (such as non-production environments).
 
-### Dynamic hosting on GCP
+## Dynamic hosting on GCP
 [Dynamic Hosting on GCP]: #dynamic-hosting-gcp
 
 The main rule about dynamic back ends on AWS or GCP is write your code within a docker container, since it reduces maintenance overhead and increases portability, even if you code specifically for GCP. This rules out AppEngine as a general approach and ideally GKS would be the service of choice, but we've also had some success using Cloud Run for jobs that need to remain available but get very low traffic (such as non-production environments).
 
-### Setting up a new AWS account
+## Setting up a new AWS account
 [Setting up a new AWS account]: #setting-up-aws-acc
 
 Log into the Master AWS account as an administrator
@@ -278,7 +283,7 @@ Add policy ViewOnlyAccess
 Call it (the same role as this one on the other accounts) so all devs automatically have access to it
 Post the switch role URL on the #perm-tech channel (using the developer access role you just made)
 
-### Setting up a new GCP project
+## Setting up a new GCP project
 [Setting up a new GCP project]: #setting-up-gcp-proj
 
 
