@@ -173,13 +173,15 @@ Lastly, go to the Cloudfront distribution URL (https://xxxx.cloudfront.net) and 
 
 ### Set up your custom domain
 
-This only works if you've set up CloudFront - if you are only using S3 website hosting you can't have a custom domain.
+This only works if you've set up CloudFront - if you are only using S3 website hosting you can't have a custom domain. To set your domain up to work with your CloudFront instance, you will need access to the DNS records, most easily configured via Route53.
 
-**TODO**
+**NB.** Do not buy a domain for your project until you've read the [Domains] section of this document.
 
-link to [Domains] about buying and DNS
+The first step is setting up a certificate to enable HTTPS on your domain. Go to the `ACM` service , and make sure you are in the **N Virginia `us-east-1`** region or your certificate won't work on CloudFront. Create a new certificate, attaching all the domains and subdomains you'll need for the project. You should avoid wildcard (*) subdomains if possible.
 
-If necessary, you will then need to go to ACM and set up a SSL certificate (in the N Virginia us-east-1 region) for your custom domains. Once it's verified, go back to the CF distro, add the SSL certificate and specify your CNAMEs for the custom domains.
+Verify the domains and subdomains on your certificate (using DNS is usually simpler, and with Route53 it's painless). Once it's verified, go back to the CloudFront distribution, where you can add the SSL certificate (it will autocomplete) and specify your CNAMEs for the custom domains against this domain.
+
+Lastly, you need to add the CF's own domain as a CNAME record against each supported subdomain, which will route the traffic to the CloudFront instance.
 
 ### Set up the credentials for deploying to your environment
 
@@ -250,12 +252,96 @@ We often use GCP for hosting static projects, or the non-production environments
 
 If you want a high performance static front end you should follow the [official tutorial](https://cloud.google.com/storage/docs/hosting-static-website), but to use our common GAE setup you need to follow these instructions.
 
-**TODO**
-set up project
-enable GAE
-create app.yaml
-push manually to your gae
-integrate CI/CD
+### Set up your project
+
+First of all [set up your GCP project and enable GAE](https://cloud.google.com/appengine/docs/standard/nodejs/building-app/creating-project) ensuring you add it to the Signal Noise organisation (you may need a tech lead to do this for you, and to enable billing via Signal Noise). Please also make sure it's in the right [organisation folder](#account-folder-structure).
+
+You also need to [set up a Service Account](https://cloud.google.com/sdk/docs/authorizing#authorizing_with_a_service_account) for CircleCi to use for deployments. You'll need to assign the Service Account the following permissions:
+   - `App Engine Deployer`
+   - `App Engine Service Admin`
+   - `Storage Object Creator`
+   - `Storage Object Viewer`
+   
+Download a JSON key for the user, and paste the whole JSON into the CircleCI > Project Settings > Environment Variables page as a var named `GCLOUD_SERVICE_KEY`, also setting the `GOOGLE_PROJECT_ID` and `GOOGLE_COMPUTE_ZONE` variables.
+
+### Set up your configuration file
+
+You need to create a configuration file in your project next - the below works well for the static use case (save it in your repository root as `app.yaml`):
+
+```yaml
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+  - url: /
+    static_files: public/index.html
+    upload: public/index.html
+    secure: always
+    login: required
+
+  - url: /(.*\..*)
+    static_files: public/\1
+    upload: public/(.*)
+    secure: always
+    http_headers:
+      Access-Control-Allow-Origin: "*"
+
+  - url: /(.+)/
+    static_files: public/\1/index.html
+    upload: public/(.+)/index.html
+
+  - url: /(.*)
+    static_files: public/\1/index.html
+    upload: public/(.*)
+    secure: always
+
+skip_files:
+  - ^(?!.*public).*$
+```
+
+Note that this assumes that your built code lives in a folder called `public`; you may need to change this for your project. 
+
+### Restricted access 
+
+In the above config, we have set it to not be publicly accessible, using the following line:
+
+```yaml
+    login: required
+```
+
+This enables auth in front of your project, but note that by default it will still be open to anyone with a Gmail account; you need to [set up IAP](https://cloud.google.com/iap/docs/app-engine-quickstart#enabling_iap) next. We generally set it to the whole `signal-noise.co.uk` domain so that internal employees can view projects, sometimes adding specific clients later in the project lifecycle.
+
+If you want to remove this restriction just on some environments, you'll need to edit your build configuration file `.circleci/config.yml` to remove the above declaration from the app.yaml at deploy time. The following bash snippet will do that for just `staging` and `production` environments:
+
+```bash
+if [[ ${ENVIRONMENT} =~ ^(production|staging)$ ]]; then
+  sed -i "s/login: required//" app.yaml
+fi
+```
+
+### CORS
+
+Another line above worth noting is the following, which enables unrestricted CORS access. 
+
+```yaml
+    http_headers:
+      Access-Control-Allow-Origin: "*"
+```
+
+Most projects won't need CORS at all, and obviously some will need better restrictions, so feel free to edit or delete this.
+
+### Integrating with CI/CD
+
+The first deployment to GAE must be manually triggered, so ensure you have the [`gcloud` CLI installed](https://cloud.google.com/sdk/install) on your machine. 
+
+Run a build locally, then deploy it manually by running the following locally, and answering the interactive questions.
+
+```bash
+gcloud app deploy
+```
+
+After this [complete the CI setup](./0003-continuous-integration#build).
 
 ## Dynamic hosting on AWS
 [Dynamic Hosting on AWS]: #dynamic-hosting-aws
@@ -286,10 +372,23 @@ Post the switch role URL on the #perm-tech channel (using the developer access r
 ## Setting up a new GCP project
 [Setting up a new GCP project]: #setting-up-gcp-proj
 
+First of all [set up your GCP project and enable GAE](https://cloud.google.com/appengine/docs/standard/nodejs/building-app/creating-project) ensuring you add it to the Signal Noise organisation (you may need a tech lead to do this for you, and to enable billing via Signal Noise). Please also make sure it's in the right [organisation folder](#account-folder-structure).
 
+**TODO** - maybe edit the setting up a new proj patrt of static hosting on GCPO
 
 ## Accessing resources
 [Accessing resources]: #accessing-resources
+
+**TODO**
+
+default resource access to stuff
+
+switching AWS in the console
+
+and on the CLI
+https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-cli.html
+
+GCP switching projects
 
 # Reference-level explanation
 [Reference-level explanation]: #reference-level-explanation
@@ -307,6 +406,8 @@ dashlane
 
 ## Domains
 [Domains]: #domains
+
+ which should be in the same AWS account as the project. You can [buy a domain on AWS](https://aws.amazon.com/getting-started/tutorials/get-a-domain/) or [move the DNS to AWS](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/migrate-dns-domain-in-use.html) if you already own the domain.
 
 ## Account or folder structure
 [Account or folder structure]: #account-folder-structure
