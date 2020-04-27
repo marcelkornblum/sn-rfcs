@@ -261,8 +261,11 @@ You also need to [set up a Service Account](https://cloud.google.com/sdk/docs/au
    - `App Engine Service Admin`
    - `Storage Object Creator`
    - `Storage Object Viewer`
+   - `Cloud Build Service Account`
    
 Download a JSON key for the user, and paste the whole JSON into the CircleCI > Project Settings > Environment Variables page as a var named `GCLOUD_SERVICE_KEY`, also setting the `GOOGLE_PROJECT_ID` and `GOOGLE_COMPUTE_ZONE` variables.
+
+Lastly, enable the [Cloud Build API](https://console.cloud.google.com/marketplace/details/google/cloudbuild.googleapis.com), needed for GAE now.
 
 ### Set up your configuration file
 
