@@ -265,7 +265,7 @@ You also need to [set up a Service Account](https://cloud.google.com/sdk/docs/au
    
 Download a JSON key for the user, and paste the whole JSON into the CircleCI > Project Settings > Environment Variables page as a var named `GCLOUD_SERVICE_KEY`, also setting the `GOOGLE_PROJECT_ID` and `GOOGLE_COMPUTE_ZONE` variables.
 
-Lastly, enable the [Cloud Build API](https://console.cloud.google.com/marketplace/details/google/cloudbuild.googleapis.com), needed for GAE now.
+Lastly, enable the [Cloud Build API](https://console.cloud.google.com/marketplace/details/google/cloudbuild.googleapis.com), and the [App Engine API](https://console.developers.google.com/apis/api/appengine.googleapis.com/overview) needed for auto-deployments to GAE now.
 
 ### Set up your configuration file
 
@@ -313,7 +313,7 @@ In the above config, we have set it to not be publicly accessible, using the fol
     login: required
 ```
 
-This enables auth in front of your project, but note that by default it will still be open to anyone with a Gmail account; you need to [set up IAP](https://cloud.google.com/iap/docs/app-engine-quickstart#enabling_iap) next. We generally set it to the whole `signal-noise.co.uk` domain so that internal employees can view projects, sometimes adding specific clients later in the project lifecycle.
+This enables auth in front of your project, but note that by default it will still be open to anyone with a Gmail account; you need to [set up IAP](https://cloud.google.com/iap/docs/app-engine-quickstart#enabling_iap) next. We generally set it to the whole `signal-noise.co.uk` domain so that internal employees can view projects (make sure the `IAP` toggle is on, and assign the `IAP-secured Web App User` permission to a 'Member' set as the bare domain `signal-noise.co.uk`), sometimes adding specific clients later in the project lifecycle.
 
 If you want to remove this restriction just on some environments, you'll need to edit your build configuration file `.circleci/config.yml` to remove the above declaration from the app.yaml at deploy time. The following bash snippet will do that for just `staging` and `production` environments:
 
