@@ -48,7 +48,7 @@ You might choose AWS for your project / environment if:
 
 You might choose GCP for your project / environment if:
 * Your production environment has to be on GCP (perhaps it's client mandated)
-* Your project hosting requirement is [static files](#static-hosting-gcp) only
+* Your project hosting requirement is [static files](#static-hosting-gcp) only (*static works better on GCP than AWS*)
 * You are using a service provided by GCP without a close analogue on AWS (especially e.g. an ML service)
 * You are using a tool or toolchain that is GCP-specific
 * The people involved in the day to day on the project are more comfortable with GCP
@@ -249,6 +249,7 @@ We often use GCP for hosting static projects, or the non-production environments
 * Free HTTPS endpoint with no setup (for a non-custom domain)
 * Access controls, allowing only specified people, or e.g. only Signal Noise employees, to access the project, with no extra code
 * Easy concurrent version hosting, making CI integration simple and painless
+* Route mapping rules, for example making bare folders return index files (e.g. so `/about` maps to `/about/index.html`)
 
 If you want a high performance static front end you should follow the [official tutorial](https://cloud.google.com/storage/docs/hosting-static-website), but to use our common GAE setup you need to follow these instructions.
 
