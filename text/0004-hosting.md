@@ -366,7 +366,7 @@ Log into the Master AWS account as an administrator
 Go to [Organization](https://console.aws.amazon.com/organizations/home) page
 Add Account > Create account
 **Use a group email - should be developers+something@**
-Wait a minute until it's crerated, then switch to the new account using the OrganizationAccountAccessRole whichb gives admin privs on that account
+Wait a minute until it's created, then switch to the new account using the OrganizationAccountAccessRole which gives admin privileges on that account
 Go to IAM > Roles > Create a Role
 Trusted entity > Another AWS Account > ID: (the master account), Require MFA [tick]
 Add policy ViewOnlyAccess
