@@ -13,22 +13,22 @@ A rundown of the common approaches to hosting used at Signal Noise, along with g
 
 We typically use one (or both) of [AWS](https://aws.amazon.com/) and [GCP](https://cloud.google.com/) for hosting when possible. We also have legacy projects on other platforms including Heroku but they are not discussed in this document.
 
-If you're interested in the general rules please jump straight to the [Reference-level explanation]; otherwise read on for guidance for specific situations you may be in.
+If you're interested in the general rules please jump straight to the [Reference-level explanation](#reference-level-explanation); otherwise read on for guidance for specific situations you may be in.
 
 # Guide-level explanation
 [Guide-level explanation]: #guide-level-explanation
 
 Jump straight to the section that is most relevant, or (preferably) read through them all first:
 
-* [Choosing between AWS and GCP]
-* [Setting up a new project]
-* [Static Hosting on AWS]
-* [Static Hosting on GCP]
-* [Dynamic Hosting on AWS]
-* [Dynamic Hosting on GCP]
-* [Setting up a new AWS account]
-* [Setting up a new GCP project]
-* [Accessing resources]
+* [Choosing between AWS and GCP](#choosing-aws-gcp)
+* [Setting up a new project](#setting-up-project)
+* [Static Hosting on AWS](#static-hosting-aws)
+* [Static Hosting on GCP](#static-hosting-gcp)
+* [Dynamic Hosting on AWS](#dynamic-hosting-aws)
+* [Dynamic Hosting on GCP](#dynamic-hosting-gcp)
+* [Setting up a new AWS account](#setting-up-aws-acc)
+* [Setting up a new GCP project](#setting-up-gcp-proj)
+* [Accessing resources](#accessing-resources)
 
 
 ## Choosing between AWS and GCP
@@ -71,7 +71,7 @@ You'll probably be setting up your CI/CD pipeline at the same time as your hosti
 ## Static hosting on AWS
 [Static Hosting on AWS]: #static-hosting-aws
 
-To set up hosting a static project, or the static part of a larger project on AWS, you will need to follow this section. It seems daunting at first but once you know what you doing it should take no more than an hour or two.
+To set up hosting a static project, or the static part of a larger project on AWS, you will need to follow this section. It seems daunting at first but once you know what you are doing it should take no more than an hour or two.
 
 There are a few ways of achieving a static hosting setup and we usually do slightly different things for different environments...
 
@@ -123,7 +123,7 @@ Once you have a bucket, check if your site requires CORS (if you're loading file
 </CORSConfiguration>
 ```
 
-If you **are using Cloudfront** for this environment, you ar done for this step and can move on. Otherwise, there are a few more things to do.
+If you **are using Cloudfront** for this environment, you are done for this step and can move on. Otherwise, there are a few more things to do.
 
 Next, enable S3 website hosting in the bucket Properties > Static website hosting dialog, by selecting Use this bucket to host a website, and specifying `index.html` as the Index document (which will enable the save button). 
 
@@ -234,11 +234,11 @@ In IAM create a Policy called `<name>` and paste the following JSON into the edi
 }
 ```
 
-**NB.** If you're not using CloudFront for this environment you can safely delete those lines. If you are using the same credentials for more than one environment, simply add the extra bucket and/or cloudfront lines to the reources section (making sure to have a line for each bucket and another line for `/*` - all the items inside the bucket).
+**NB.** If you're not using CloudFront for this environment you can safely delete those lines. If you are using the same credentials for more than one environment, simply add the extra bucket and/or cloudfront lines to the resources section (making sure to have a line for each bucket and another line for `/*` - all the items inside the bucket).
 
-Next, still in IAM, create a user also called `<name>`, and assign it the policy you just made. Give it programmatic access and mane a note of the key and secret (but make sure the note can be deleted later; you don't want this in a repo, a chat message or anything persistent). This is the user the CI system will use to deploy your front end.
+Next, still in IAM, create a user also called `<name>`, and assign it the policy you just made. Give it programmatic access and make a note of the key and secret (but make sure the note can be deleted later; you don't want this in a repo, a chat message or anything persistent). This is the user the CI system will use to deploy your front end.
 
-The next step is making easy for perm Signal Noise devs to perform the same operations as the use you've just made. Simply attach the new Policy to the DeveloperAccessFromMaster Role that you should find in IAM if the account was set up according to these instructions. Note that for high security environments you may not want to perform this step, or you may want to attach the policy to a custom role not available to all developers. 
+The next step is making easy for perm Signal Noise devs to perform the same operations as the CI user you've just made (ie deploying). Simply attach the new Policy to the DeveloperAccessFromMaster Role that you should find in IAM if the account was set up according to these instructions. Note that for high security environments you may not want to perform this step, or you may want to attach the policy to a custom role not available to all developers. 
 
 Lastly, [set up CI](./0003-continuous-integration) using the key and secrets you noted above (you should have at least two: production and non-production, and perhaps more per-environment). Test a CI build and make sure it puts the right code in the right place and that it's accessible via the CF endpoint.
 
@@ -362,16 +362,15 @@ The main rule about dynamic back ends on AWS or GCP is write your code within a 
 ## Setting up a new AWS account
 [Setting up a new AWS account]: #setting-up-aws-acc
 
-Log into the Master AWS account as an administrator
-Go to [Organization](https://console.aws.amazon.com/organizations/home) page
-Add Account > Create account
-**Use a group email - should be developers+something@**
-Wait a minute until it's created, then switch to the new account using the OrganizationAccountAccessRole which gives admin privileges on that account
-Go to IAM > Roles > Create a Role
-Trusted entity > Another AWS Account > ID: (the master account), Require MFA [tick]
-Add policy ViewOnlyAccess
-Call it (the same role as this one on the other accounts) so all devs automatically have access to it
-Post the switch role URL on the #perm-tech channel (using the developer access role you just made)
+* Log into the Master AWS account as an administrator
+* Go to [Organization](https://console.aws.amazon.com/organizations/home) page
+* Add Account > Create account (**Use a group email - should be developers+something@**)
+* Wait a minute until it's created, then switch to the new account using the OrganizationAccountAccessRole which gives admin privileges on that account
+* Go to IAM > Roles > Create a Role
+* Trusted entity > Another AWS Account > ID: (the master account), Require MFA [tick]
+* Add policy ViewOnlyAccess
+* Call it (the same role as this one on the other accounts) so all devs automatically have access to it
+* Post the switch role URL on the #perm-tech channel (using the developer access role you just made)
 
 ## Setting up a new GCP project
 [Setting up a new GCP project]: #setting-up-gcp-proj
@@ -397,9 +396,9 @@ GCP switching projects
 # Reference-level explanation
 [Reference-level explanation]: #reference-level-explanation
 
-* [Secrets]
-* [Domains]
-* [Account or folder structure]
+* [Secrets](#secrets)
+* [Domains](#domains)
+* [Account or folder structure](#account-folder-structure)
 
 ## Secrets
 [Secrets]: #secrets
