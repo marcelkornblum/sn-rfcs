@@ -403,14 +403,20 @@ GCP switching projects
 ## Secrets
 [Secrets]: #secrets
 
-.env
+**Never commit your secrets to the repo** (except perhaps ones that are only valid on a dev environment, but even then ideally don't commit them). 
 
-dashlane
+On most projects the easiest thing to do is to keep them in an `.env` file and use code in the project to make them available. If you do this ensure that the file does not get committed, though it's best practice to make and version a `.env.sample` file that has all the required keys in it, to make life easier for people. 
+
+You also need to keep all the secrets you manage this way in Dashlane: create a secure note and copy the env file contents in along with any other bits and pieces needed. Name the note with the project name and ideally number, and share it with the Technology group.
+
+It's OK to keep secrets in CircleCI's Environment variables area (you'll need to anyway) or in GCP's or AWS's Secret Manager modules.
 
 ## Domains
 [Domains]: #domains
 
- which should be in the same AWS account as the project. You can [buy a domain on AWS](https://aws.amazon.com/getting-started/tutorials/get-a-domain/) or [move the DNS to AWS](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/migrate-dns-domain-in-use.html) if you already own the domain.
+Project-specific bought domains should be managed in Route53, in the same AWS account as the project. You can [buy a domain on AWS](https://aws.amazon.com/getting-started/tutorials/get-a-domain/) or [move the DNS to AWS](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/migrate-dns-domain-in-use.html) if you already own the domain. If the name is not available in Route53 please use name.com using the company account, and manage the DNS on Route53.
+
+It's bad practice to speculatively buy a domain on behalf of a client.
 
 ## Account or folder structure
 [Account or folder structure]: #account-folder-structure
