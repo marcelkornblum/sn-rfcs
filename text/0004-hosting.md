@@ -185,7 +185,7 @@ Lastly, you need to add the CF's own domain as a CNAME record against each suppo
 
 ### Set up the credentials for deploying to your environment
 
-We're going to set up an AWS IAM Policy with limited credentials; just enough to deploy to our new static environment. For the sake of pragmatism we usually make a single policy for all non-production environments and a seond set of credentials for production. Some projects require a stronger security posture and a separate set of creds should be made for each.
+We're going to set up an AWS IAM Policy with limited credentials; just enough to deploy to our new static environment. For the sake of pragmatism we usually make a single policy for all non-production environments and a second set of credentials for production. Some projects require a stronger security posture and a separate set of credentials should be made for each.
 
 The Policy defines a set of API calls that can be made (either via the CLI or the Console); we'll associate our policy with a new IAM User created specifically for that purpose, and also with the IAM Role that developers use to access resources, coming from the Master AWS account.
 
