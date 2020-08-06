@@ -107,7 +107,7 @@ If you're making a shared resource (e.g. a security policy covering more than on
 
 Create an S3 bucket called whichever `<name>` you are using for this environment, described above.
 
-First, you can simply follow the bucket creation wizard, accepting all the default options, except that you should make sure not to block all public access as you're going to be hosting directly from the bucket (just uncheck the box in the creation wizard). You may want to avoid this in a a few cases (e.g. if you are setting up [OAI access via CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)) but usually you'll want the content publicly accessible.
+First, you can simply follow the bucket creation wizard, accepting all the default options, except that you should make sure not to block all public access as you're going to be hosting directly from the bucket (just uncheck the box in the creation wizard). You may want to avoid this in a few cases (e.g. if you are setting up [OAI access via CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)) but usually you'll want the content publicly accessible.
 
 You may want to upload a file, just to have something to test your setup on.
 
@@ -314,7 +314,9 @@ In the above config, we have set it to not be publicly accessible, using the fol
     login: required
 ```
 
-This enables auth in front of your project, but note that by default it will still be open to anyone with a Gmail account; you need to [set up IAP](https://cloud.google.com/iap/docs/app-engine-quickstart#enabling_iap) next. We generally set it to the whole `signal-noise.co.uk` domain so that internal employees can view projects (make sure the `IAP` toggle is on, and assign the `IAP-secured Web App User` permission to a 'Member' set as the bare domain `signal-noise.co.uk`), sometimes adding specific clients later in the project lifecycle.
+This enables auth in front of your project, but note that by default it will still be open to anyone with a Gmail account; you need to [set up IAP](https://cloud.google.com/iap/docs/app-engine-quickstart#enabling_iap) next. In order to set up IAP, you may first need to configure the oAuth credentials screen - just do the minimum required. 
+
+We generally set IAP to the whole `signal-noise.co.uk` domain so that internal employees can view projects (make sure the `IAP` toggle is on, and assign the `IAP-secured Web App User` permission to a 'Member' set as the bare domain `signal-noise.co.uk`), sometimes adding specific clients later in the project lifecycle.
 
 If you want to remove this restriction just on some environments, you'll need to edit your build configuration file `.circleci/config.yml` to remove the above declaration from the app.yaml at deploy time. The following bash snippet will do that for just `staging` and `production` environments:
 
