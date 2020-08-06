@@ -352,7 +352,7 @@ After this [complete the CI setup](./0003-continuous-integration#build).
 
 The main rule about dynamic back ends on AWS or GCP is write your code within a docker container, since it reduces maintenance overhead and increases portability, even if you code specifically for AWS. Since ElasticBeanstalk has very poor support for containers (it uses ECS in a very inflexible way that causes a lot of headaches), the best options are ECS or EKS directly, or for small projects to use Lambdas.
 
-These are all outside the scope of this document since they become very involved and project-specific, but if using containers please conside the Fargate runtime for jobs that need to remain available but get very low traffic (such as non-production environments).
+These are all outside the scope of this document since they become very involved and project-specific, but if using containers please consider the Fargate runtime for jobs that need to remain available but get very low traffic (such as non-production environments).
 
 ## Dynamic hosting on GCP
 [Dynamic Hosting on GCP]: #dynamic-hosting-gcp
