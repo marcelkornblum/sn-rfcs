@@ -71,7 +71,7 @@ You'll probably be setting up your CI/CD pipeline at the same time as your hosti
 ## Static hosting on AWS
 [Static Hosting on AWS]: #static-hosting-aws
 
-To set up hosting a static project, or the static part of a larger project on AWS, you will need to follow this section. It seems daunting at first but once you know what you are doing it should take no more than an hour or two.
+To set up hosting a static project, or the static part of a larger project on AWS, you will need to follow this section. It seems daunting at first but once you know what you are doing it should take no more than an hour.
 
 There are a few ways of achieving a static hosting setup and we usually do slightly different things for different environments...
 
@@ -92,6 +92,8 @@ _Preview_ and _PR_ environments can all be hosted in subfolders of a single S3 b
 | _PR_ | Shared | Yes | No | Shared 'non-production' |
 
 Then, making sure you [choose the right AWS account](#account-folder-structure) for your project and environment, you need to follow the below instructions for each environment you'll need.
+
+**NB. For Wordpress hosting, you mayu find it easiest / best to use AWS Lightsail which is cheap and easy to get going with.**
 
 ### Get your environment name
 
@@ -155,7 +157,7 @@ Lastly, go to the website endpoint you noted earlier and check that you can see 
 
 Skip this step if you aren't making a production or staging environment. Otherwise, use the following settings unless you know what you're doing (anything that isn't mentioned is usually best left untouched).
 
-1. Your Origin should be the bucket *website* url, especially if you're using Gatsby, as explained in [this page](https://www.gatsbyjs.org/docs/deploying-to-s3-cloudfront/#setting-up-cloudfront).
+1. Your Origin should be the bucket **website** url, especially if you're using Gatsby, as explained in [this page](https://www.gatsbyjs.org/docs/deploying-to-s3-cloudfront/#setting-up-cloudfront).
 2. You should probably set _Viewer Protocol Policy_ to `Redirect HTTP to HTTPS`
 3. If your site loads data at runtime you may need CORS set up. If so, you need to do [a few extra things](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/header-caching.html#header-caching-web-cors):
   * In the Behaviours section, select `GET, HEAD, OPTIONS` under _Allowed HTTP Methods_
@@ -379,21 +381,23 @@ The main rule about dynamic back ends on AWS or GCP is write your code within a 
 
 First of all [set up your GCP project and enable GAE](https://cloud.google.com/appengine/docs/standard/nodejs/building-app/creating-project) ensuring you add it to the Signal Noise organisation (you may need a tech lead to do this for you, and to enable billing via Signal Noise). Please also make sure it's in the right [organisation folder](#account-folder-structure).
 
-**TODO** - maybe edit the setting up a new proj patrt of static hosting on GCPO
-
 ## Accessing resources
 [Accessing resources]: #accessing-resources
 
-**TODO**
+By default, we use the following access rules:
 
-default resource access to stuff
+* Freelancers have no direct resource access
+* Permanent coders get view access to all AWS accounts
+* Permanent coders also get the same permissions as the CI users, so they ought to be able to write files etc and manually deploy resources if needed
+* Permanent coders get admin access to a Sandbox AWS account for experimentation / debugging etc.
+* Project Technical Leads (either a Tech Lead or occasionally a Lead Developer) will get admin access to the relevant AWS account, though this should be revoked when needed
+* Technical Director has admin access to all AWS accounts via a secondary role (on AWS).
 
-switching AWS in the console
+On GCP switching projects is trivial and all projects should be on the same overall account; if you can't see a project you need ask a Tech Lead to add you.
 
-and on the CLI
-https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-cli.html
+On AWS in the console, to access any project resources you will need to first login to the master account with your username (generally your email address) and your password + MFA device. Note the master account has user access and audit records but no hosting resources. From there you will need to [Switch Role](https://signin.aws.amazon.com/switchrole) in the top right menu. You'll need to enter the relevant AWS acocunt number (to be found pinned in the #perm-tech Slack channel) as well as the Role name and a name + colour for your reference. Note that this is stored in a cookie so that the last 5 Roles you access are retained in that browser. The standard Role name used for perm coders is the same across all accounts and is also pinned in the same channel.
 
-GCP switching projects
+To access AWS resources via the CLI, in an account you access via Role Switching, follow this siomple guide: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-cli.html
 
 # Reference-level explanation
 [Reference-level explanation]: #reference-level-explanation
@@ -465,53 +469,21 @@ Projects should get a Specific Project Production AWS account only if they are v
 # Drawbacks
 [Drawbacks]: #drawbacks
 
-Why should we _not_ do this?
+This guide only really covers static hosting, and doesn't go into all the settings for secure production hosting even then. Some independent knowledge would be required to be confident that something has been set up correctly, but this guide should at least allow anyone with credentials to set up a project's non-produiction hosting in a way that will cause the fewest headaches.
 
 # Rationale and alternatives
 [Rationale and alternatives]: #rationale-and-alternatives
 
-- Why is this approach the best in the space of possible approaches?
-- What other approaches have been considered and what is the rationale for not choosing them?
-- What is the impact of not doing this?
-
-# Prior art
-[Prior art]: #prior-art
-
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Is this done by some other community and what were their experiences with it?
-- For other teams: What lessons can we learn from what other communities have done here?
-- Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
-
-This section is intended to encourage you as an author to think about the lessons from other organisations, provide readers of your RFC with a fuller picture.
-If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other languages.
-
-Note that while precedent set by other companies or teams is some motivation, it does not on its own motivate an RFC.
-Please also take into consideration that Signal Noise sometimes intentionally diverges from common approaches.
+These approaches have been tried and tested across many projects. It's also not really a single approach so much as a framework and guidance for choosing the right setup for yuour circumstances. The overall idea is to reduce our dependence on a wide variety of hosting providers that may make some processes easier but add to overall admin and management overheads - for example such as using Heroku or Zeit.
 
 # Unresolved questions
 [Unresolved questions]: #unresolved-questions
 
-- What parts of the approach do you expect to resolve through the RFC process before this gets merged?
-- What parts of the approach do you expect to resolve through the implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
+This RFC does not really cover dynamic or complex hosting requirements, nor does it discuss choices such as whether to use AWS services or self-hosted servers on AWS. All of these merit discussino but would complicate this document and are better suited to a dedicated RFC regarding infrastructural choices. 
+
+Security concerns and the tradeoffs regarding e.g. CSP headers with Styled Components are also not discussed, despite touching on the hosting solution in place.
 
 # Future possibilities
 [Future possibilities]: #future-possibilities
 
-Think about what the natural extension and evolution of your proposal would
-be and how it would affect the company as a whole in a holistic
-way. Try to use this section as a tool to more fully consider all possible
-interactions with the company and team in your proposal.
-
-This is also a good place to "dump ideas", if they are out of scope for the
-RFC you are writing but otherwise related.
-
-If you have tried and cannot think of any future possibilities,
-you may simply state that you cannot think of anything.
-
-Note that having something written down in the future-possibilities section
-is not a reason to accept the current or a future RFC; such notes should be
-in the section on motivation or rationale in this or subsequent RFCs.
-The section merely provides additional information.
+As AWS and GCP expand their offering this guide will have to change.
