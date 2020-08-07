@@ -361,7 +361,7 @@ These are all outside the scope of this document since they become very involved
 ## Dynamic hosting on GCP
 [Dynamic Hosting on GCP]: #dynamic-hosting-gcp
 
-The main rule about dynamic back ends on AWS or GCP is write your code within a docker container, since it reduces maintenance overhead and increases portability, even if you code specifically for GCP. This rules out AppEngine as a general approach and ideally GKS would be the service of choice, but we've also had some success using Cloud Run for jobs that need to remain available but get very low traffic (such as non-production environments).
+The main rule about dynamic back ends on AWS or GCP is write your code within a docker container, since it reduces maintenance overhead and increases portability, even if you code specifically for GCP. This rules out AppEngine as a general approach and ideally [GKE](https://cloud.google.com/kubernetes-engine) would be the service of choice, but we've also had some success using Cloud Run for jobs that need to remain available but get very low traffic (such as non-production environments).
 
 ## Setting up a new AWS account
 [Setting up a new AWS account]: #setting-up-aws-acc
