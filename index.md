@@ -63,9 +63,7 @@ TLDR; follow the guides but be sensible about it.
 
 ## Deploying
 
-Always use CI deployment tools. Never deploy by hand: it's error-prone and stressful. CI also has the benefit of making a clean environment in which your code runs; this is handy when returning to a project as all system tools should be version pinned (never use `latest` version; always use a specific version) and encapsulated.
-
-A full guide can be found on [the RFCs site](https://signal-noise.github.io/rfcs/text/0003-continuous-integration.html).
+Always use CI deployment tools. Never deploy by hand: it's error-prone and stressful. CI also has the benefit of making a clean environment in which your code runs; this is handy when returning to a project as all system tools should be version pinned (never use `latest` version; always use a specific version) and encapsulated. Read the full guide in [the CI RFC](https://signal-noise.github.io/rfcs/text/0003-continuous-integration.html).
 
 ## Testing
 
