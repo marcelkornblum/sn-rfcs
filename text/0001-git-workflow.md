@@ -1,3 +1,8 @@
+---
+title: Git Workflow
+description: Structuring commits and branches
+---
+
 - Feature Name: `git_workflow`
 - Start Date: 2019-10-16
 - RFC PR: [signal-noise/rfcs#0002](https://github.com/signal-noise/rfcs/pull/0002)

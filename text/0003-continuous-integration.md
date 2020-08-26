@@ -1,3 +1,8 @@
+---
+title: CI/CD
+description: Standardised approach to auto deployment
+---
+
 - Feature Name: `continuous-integration`
 - Start Date: 2019-11-18
 - RFC PR: [signal-noise/rfcs#0005](https://github.com/signal-noise/rfcs/pull/0005)

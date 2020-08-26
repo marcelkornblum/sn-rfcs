@@ -1,0 +1,45 @@
+---
+---
+
+$section-headings-color: rgb(11, 12, 33);
+$body-link-color: #fa6a76;
+$header-bg-color: rgb(11, 12, 33);
+$header-bg-color-secondary: rgb(11, 12, 33);
+
+@import "{{ site.theme }}";
+
+html {
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+#skip-to-content {
+  &:focus {
+    top: -10px;
+  }
+}
+
+.page-header {
+  @include large {
+    padding: 3rem 6rem;
+  }
+
+  @include medium {
+    padding: 1rem 4rem;
+  }
+
+  @include small {
+    padding: 1rem 1rem;
+  }
+
+  a {
+    color: #fff;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.project-tagline {
+  margin-bottom: none;
+}
