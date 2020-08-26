@@ -49,6 +49,7 @@ You might choose AWS for your project / environment if:
 You might choose GCP for your project / environment if:
 * Your production environment has to be on GCP (perhaps it's client mandated)
 * Your project hosting requirement is [static files](#static-hosting-gcp) only (*static works better on GCP than AWS*)
+* You need basic password protection on your static site, perhaps on non-production environments (this is easy in GCP and complex in AWS)
 * You are using a service provided by GCP without a close analogue on AWS (especially e.g. an ML service)
 * You are using a tool or toolchain that is GCP-specific
 * The people involved in the day to day on the project are more comfortable with GCP
@@ -93,7 +94,7 @@ _Preview_ and _PR_ environments can all be hosted in subfolders of a single S3 b
 
 Then, making sure you [choose the right AWS account](#account-folder-structure) for your project and environment, you need to follow the below instructions for each environment you'll need.
 
-**NB. For Wordpress hosting, you mayu find it easiest / best to use AWS Lightsail which is cheap and easy to get going with.**
+**NB. For Wordpress hosting, you may find it easiest / best to use AWS Lightsail which is cheap and easy to get going with.**
 
 ### Get your environment name
 
@@ -172,6 +173,14 @@ Skip this step if you aren't making a production or staging environment. Otherwi
 **NB.** It's really important to make sure you use the comment field to put the project name and ENVIRONMENT; when scanning a list of CloudFront distributions this is by far the easiest way to see which is which. It's also searchable.
 
 Lastly, go to the Cloudfront distribution URL (https://xxxx.cloudfront.net) and check you can see your content.
+
+### Password protection of a static site on AWS
+[Password protecting a static site on AWS]: #aws-static-password
+
+If you are hosting your static site on AWS as described in this guide, and you do need some sort of password protection, you will have to do a couple of extra things:
+* Ensure your S3 bucket does **NOT** serve content as a website, and that content is not publicly accessible directly from it (NB this breaks Gatsby's deep linking functionality)
+* Ensure you have a CloudFront distribution, accessing the S3 bucket content via the API (the default in the CF setup console wizard), using [Origin Access Identity](https://aws.amazon.com/premiumsupport/knowledge-center/cloudfront-access-to-amazon-s3/)
+* [Setup a Lambda@Edge function](https://medium.com/hackernoon/serverless-password-protecting-a-static-website-in-an-aws-s3-bucket-bfaaa01b8666) connected to your CF distribution to enforce HTTP Basic password protection
 
 ### Set up your custom domain
 
