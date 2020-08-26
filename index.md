@@ -29,7 +29,7 @@ No one set of rules will cover all eventualities; and we want to be free to choo
 
 ## Getting started
 
-You should start by reading about our [Git Workflow](./text/0001-git-workflow) and the associated [CI/CD approach](./text/0003-continuous-integration.md). If you're setting up a new project you'll probably need to read about [hosting](./text/0004-hosting.md) as well.
+You should start by reading about our [Git Workflow](./text/0001-git-workflow) and the associated [CI/CD approach](./text/0003-continuous-integration). If you're setting up a new project you'll probably need to read about [hosting](./text/0004-hosting) as well.
 
 Use a version manager for all your runtimes; examples include [nvm](https://github.com/creationix/nvm) and [pyenv](https://github.com/pyenv/pyenv).
 
@@ -91,5 +91,5 @@ For reference, all the approved RFCs are listed here:
 
 * [0001 Git Workflow](./text/0001-git-workflow)
 * [0002 JS Tooling - Linting and Formatting](./text/0002-tooling-linting-formatting)
-* [0003 Continuous Integration](./text/0003-continuous-integration.md)
-* [0004 Hosting](./text/0004-hosting.md)
+* [0003 Continuous Integration](./text/0003-continuous-integration)
+* [0004 Hosting](./text/0004-hosting)
