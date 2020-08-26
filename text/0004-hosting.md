@@ -469,7 +469,7 @@ Projects should get a Specific Project Production AWS account only if they are v
 # Drawbacks
 [Drawbacks]: #drawbacks
 
-This guide only really covers static hosting, and doesn't go into all the settings for secure production hosting even then. Some independent knowledge would be required to be confident that something has been set up correctly, but this guide should at least allow anyone with credentials to set up a project's non-produiction hosting in a way that will cause the fewest headaches.
+This guide only really covers static hosting, and doesn't go into all the settings for secure production hosting even then. Some independent knowledge would be required to be confident that something has been set up correctly, but this guide should at least allow anyone with credentials to set up a project's non-production hosting in a way that will cause the fewest headaches.
 
 # Rationale and alternatives
 [Rationale and alternatives]: #rationale-and-alternatives
