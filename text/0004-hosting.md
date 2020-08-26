@@ -474,7 +474,7 @@ This guide only really covers static hosting, and doesn't go into all the settin
 # Rationale and alternatives
 [Rationale and alternatives]: #rationale-and-alternatives
 
-These approaches have been tried and tested across many projects. It's also not really a single approach so much as a framework and guidance for choosing the right setup for yuour circumstances. The overall idea is to reduce our dependence on a wide variety of hosting providers that may make some processes easier but add to overall admin and management overheads - for example such as using Heroku or Zeit.
+These approaches have been tried and tested across many projects. It's also not really a single approach so much as a framework and guidance for choosing the right setup for your circumstances. The overall idea is to reduce our dependence on a wide variety of hosting providers that may make some processes easier but add to overall admin and management overheads - for example such as using Heroku or Zeit.
 
 # Unresolved questions
 [Unresolved questions]: #unresolved-questions
