@@ -479,7 +479,7 @@ These approaches have been tried and tested across many projects. It's also not 
 # Unresolved questions
 [Unresolved questions]: #unresolved-questions
 
-This RFC does not really cover dynamic or complex hosting requirements, nor does it discuss choices such as whether to use AWS services or self-hosted servers on AWS. All of these merit discussino but would complicate this document and are better suited to a dedicated RFC regarding infrastructural choices. 
+This RFC does not really cover dynamic or complex hosting requirements, nor does it discuss choices such as whether to use AWS services or self-hosted servers on AWS. All of these merit discussion but would complicate this document and are better suited to a dedicated RFC regarding infrastructural choices. 
 
 Security concerns and the tradeoffs regarding e.g. CSP headers with Styled Components are also not discussed, despite touching on the hosting solution in place.
 
