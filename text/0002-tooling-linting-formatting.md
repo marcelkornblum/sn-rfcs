@@ -223,7 +223,7 @@ The core defaults with Prettier are:
 - 2 space tab width
 - "Double" quotes
 - Enforce use of semicolons
-- No trailing commas
+- Trailing commas
 
 ### Import Sort
 [import-sort]: #import-sort
