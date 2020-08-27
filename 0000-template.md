@@ -1,3 +1,7 @@
+---
+title: Short Readable Title
+description: Pithy sentence explaining the feature
+---
 - Feature Name: (fill me in with a unique ident, `my_awesome_feature`)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
 - RFC PR: [signal-noise/rfcs#0000](https://github.com/signal-noise/rfcs/pull/0000)
