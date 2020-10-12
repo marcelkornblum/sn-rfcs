@@ -2,6 +2,13 @@
 
 > This site hosts the RFCs for the Signal Noise organisation, that together define the approaches and tools that we take to create our work.
 
+For reference, all the approved RFCs are listed here:
+
+* [0001 Git Workflow](./text/0001-git-workflow)
+* [0002 JS Tooling - Linting and Formatting](./text/0002-tooling-linting-formatting)
+* [0003 Continuous Integration](./text/0003-continuous-integration)
+* [0004 Hosting](./text/0004-hosting)
+
 The aim with all the rules is to minimise the administration needed to stick to them, while saving time in the long term (i.e. thinking about returning to the project, bugfixing, etc). Where possible `all rules have tools` -- automation should support any new rule so that we're not adding to overheads, basically making implementation almost trivial.
 
 > The first aim for all of our work is **quality**.
@@ -86,10 +93,3 @@ As a general guide, follow the testing pyramid, and specifically for unit testin
 We follow [an RFC process](https://en.wikipedia.org/wiki/Request_for_Comments) to write our team guidelines, managed via our [RFC Github repository](https://github.com/signal-noise/rfcs). If you would like to add a new guideline or change any of the existing rules, follow the instructions in the main README so the team gets to debate any changes.
 
 Note that all debates and comments are kept private within the team, but that **the final ratified rule is [publicly accessible](https://signal-noise.github.io/rfcs/)**.
-
-For reference, all the approved RFCs are listed here:
-
-* [0001 Git Workflow](./text/0001-git-workflow)
-* [0002 JS Tooling - Linting and Formatting](./text/0002-tooling-linting-formatting)
-* [0003 Continuous Integration](./text/0003-continuous-integration)
-* [0004 Hosting](./text/0004-hosting)

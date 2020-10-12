@@ -275,6 +275,7 @@ You also need to [set up a Service Account](https://cloud.google.com/sdk/docs/au
    - `Storage Object Creator`
    - `Storage Object Viewer`
    - `Cloud Build Service Account`
+   - `Service Account User`
    
 Download a JSON key for the user, and paste the whole JSON into the CircleCI > Project Settings > Environment Variables page as a var named `GCLOUD_SERVICE_KEY`, also setting the `GOOGLE_PROJECT_ID` and `GOOGLE_COMPUTE_ZONE` variables.
 
