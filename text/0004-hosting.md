@@ -116,14 +116,21 @@ You may want to upload a file, just to have something to test your setup on.
 
 Once you have a bucket, check if your site requires CORS (if you're loading files at runtime there's a decent chance you'll end up needing it) - if so, now is the time to set it up. In the bucket Permissions > CORS configuration, add the following (tweak the specific settings to be less permissive in production, by e.g. specifying domain names):
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-  <CORSRule>
-    <AllowedOrigin>*</AllowedOrigin>
-    <AllowedMethod>GET</AllowedMethod>
-  </CORSRule>
-</CORSConfiguration>
+```json
+[
+    {
+        "AllowedHeaders": [
+            "*"
+        ],
+        "AllowedMethods": [
+            "GET"
+        ],
+        "AllowedOrigins": [
+            "*"
+        ],
+        "ExposeHeaders": []
+    }
+]
 ```
 
 If you **are using Cloudfront** for this environment, you are done for this step and can move on. Otherwise, there are a few more things to do.
