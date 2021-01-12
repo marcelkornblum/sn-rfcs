@@ -13,26 +13,26 @@ A rundown of the common approaches to hosting used at Signal Noise, along with g
 
 We typically use one (or both) of [AWS](https://aws.amazon.com/) and [GCP](https://cloud.google.com/) for hosting when possible. We also have legacy projects on other platforms including Heroku but they are not discussed in this document.
 
-If you're interested in the general rules please jump straight to the [Reference-level explanation](#reference-level-explanation); otherwise read on for guidance for specific situations you may be in.
+If you're interested in the general rules please jump straight to the **[Reference-level explanation](#reference-level-explanation)**; otherwise read on for guidance for specific situations you may be in.
 
 # Guide-level explanation
 [Guide-level explanation]: #guide-level-explanation
 
 Jump straight to the section that is most relevant, or (preferably) read through them all first:
 
-* [Choosing between AWS and GCP](#choosing-aws-gcp)
-* [Setting up a new project](#setting-up-project)
-* [Static Hosting on AWS](#static-hosting-aws)
-* [Static Hosting on GCP](#static-hosting-gcp)
-* [Dynamic Hosting on AWS](#dynamic-hosting-aws)
-* [Dynamic Hosting on GCP](#dynamic-hosting-gcp)
-* [Setting up a new AWS account](#setting-up-aws-acc)
-* [Setting up a new GCP project](#setting-up-gcp-proj)
+* [Choosing between AWS and GCP](#choosing-between-aws-and-gcp)
+* [Setting up a new project](#setting-up-a-new-project)
+* [Static Hosting on AWS](#static-hosting-on-aws)
+* [Static Hosting on GCP](#static-hosting-on-gcp)
+* [Dynamic Hosting on AWS](#dynamic-hosting-on-aws)
+* [Dynamic Hosting on GCP](#dynamic-hosting-on-gcp)
+* [Setting up a new AWS account](#setting-up-a-new-aws-account)
+* [Setting up a new GCP project](#setting-up-a-new-gcp-project)
 * [Accessing resources](#accessing-resources)
 
 
 ## Choosing between AWS and GCP
-[Choosing between AWS and GCP]: #choosing-aws-gcp
+[Choosing between AWS and GCP]: #choosing-between-aws-and-gcp
 
 In general terms, AWS and GCP have near parity in terms of features they offer, and usually the choice of which to take has no serious technical weight. That said, there are some circumstances which make one or the other a better choice for your project, should the client not be mandating which platform you use.
 
@@ -59,7 +59,7 @@ All else being equal, we usually prefer GCP over AWS since it involves less mana
 * The management of project resources is simpler, taking into account pricing structures and security optimisation
 
 ## Setting up a new project
-[Setting up a new project]: #setting-up-project
+[Setting up a new project]: #setting-up-a-new-project
 
 When setting up a new project, the first thing to consider is the hosting provider or combination of providers. A common scenario is to use GCP for non-production hosting, with AWS for production and staging environments.
 
@@ -70,9 +70,16 @@ Next, you'll need to set up your project environments. Usually you'll benefit by
 You'll probably be setting up your CI/CD pipeline at the same time as your hosting; if not make sure you take notes of secret keys and credentials as you go, but that you **[manage them properly](#secrets)**.
 
 ## Static hosting on AWS
-[Static Hosting on AWS]: #static-hosting-aws
+[Static Hosting on AWS]: #static-hosting-on-aws
 
-To set up hosting a static project, or the static part of a larger project on AWS, you will need to follow this section. It seems daunting at first but once you know what you are doing it should take no more than an hour.
+To set up hosting a static project, or the static part of a larger project on AWS, you will need to follow this section. It seems daunting at first but once you know what you are doing it should take no more than half an hour. If you want to skip to a specific section in this topic use this submenu:
+
+* [Get your environment name](#get-your-environment-name)
+* [Set up your S3 Bucket](#set-up-your-s3-bucket)
+* [Set up your CloudFront Distribution](#set-up-your-cloudfront-distribution)
+* [Password protection of a static site on AWS](#password-protection-of-a-static-site-on-aws)
+* [Set up your custom domain](#set-up-your-custom-domain)
+* [Set up the credentials for deploying to your environment](#set-up-the-credentials-for-deploying-to-your-environment)
 
 There are a few ways of achieving a static hosting setup and we usually do slightly different things for different environments...
 
@@ -262,7 +269,7 @@ The next step is making it easy for perm Signal Noise devs to perform the same o
 Lastly, [set up CI](./0003-continuous-integration) using the key and secrets you noted above (you should have at least two: production and non-production, and perhaps more per-environment). Test a CI build and make sure it puts the right code in the right place and that it's accessible via the CF endpoint.
 
 ## Static hosting on GCP
-[Static Hosting on GCP]: #static-hosting-gcp
+[Static Hosting on GCP]: #static-hosting-on-gcp
 
 We often use GCP for hosting static projects, or the non-production environments of static projects, since the [AppEngine](https://cloud.google.com/appengine/) service gives the following easy-to-setup benefits over e.g. AWS S3:
 * Free HTTPS endpoint with no setup (for a non-custom domain)
@@ -270,7 +277,13 @@ We often use GCP for hosting static projects, or the non-production environments
 * Easy concurrent version hosting, making CI integration simple and painless
 * Route mapping rules, for example making bare folders return index files (e.g. so `/about` maps to `/about/index.html`)
 
-If you want a high performance static front end you should follow the [official tutorial](https://cloud.google.com/storage/docs/hosting-static-website), but to use our common GAE setup you need to follow these instructions.
+If you want a high performance static front end you should follow the [official tutorial](https://cloud.google.com/storage/docs/hosting-static-website), but to use our common GAE setup you need to follow these instructions. If you want to skip to a specific section in this topic use this submenu:
+
+* [Set up your project](#set-up-your-project)
+* [Set up your configuration file](#set-up-your-configuration-file)
+* [Restricted access](#restricted-access)
+* [CORS](#cors)
+* [Integrating with CI/CD](#integrating-with-cicd)
 
 ### Set up your project
 
@@ -370,19 +383,19 @@ gcloud app deploy
 After this [complete the CI setup](./0003-continuous-integration#build).
 
 ## Dynamic hosting on AWS
-[Dynamic Hosting on AWS]: #dynamic-hosting-aws
+[Dynamic Hosting on AWS]: #dynamic-hosting-on-aws
 
 The main rule about dynamic back ends on AWS or GCP is write your code within a docker container, since it reduces maintenance overhead and increases portability, even if you code specifically for AWS. Since ElasticBeanstalk has very poor support for containers (it uses ECS in a very inflexible way that causes a lot of headaches), the best options are ECS or EKS directly, or for small projects to use Lambdas.
 
 These are all outside the scope of this document since they become very involved and project-specific, but if using containers please consider the Fargate runtime for jobs that need to remain available but get very low traffic (such as non-production environments).
 
 ## Dynamic hosting on GCP
-[Dynamic Hosting on GCP]: #dynamic-hosting-gcp
+[Dynamic Hosting on GCP]: #dynamic-hosting-on-gcp
 
 The main rule about dynamic back ends on AWS or GCP is write your code within a docker container, since it reduces maintenance overhead and increases portability, even if you code specifically for GCP. This rules out AppEngine as a general approach and ideally [GKE](https://cloud.google.com/kubernetes-engine) would be the service of choice, but we've also had some success using Cloud Run for jobs that need to remain available but get very low traffic (such as non-production environments).
 
 ## Setting up a new AWS account
-[Setting up a new AWS account]: #setting-up-aws-acc
+[Setting up a new AWS account]: #setting-up-a-new-aws-account
 
 * Log into the Master AWS account as an administrator
 * Go to [Organization](https://console.aws.amazon.com/organizations/home) page
@@ -395,7 +408,7 @@ The main rule about dynamic back ends on AWS or GCP is write your code within a 
 * Post the switch role URL on the #perm-tech channel (using the developer access role you just made)
 
 ## Setting up a new GCP project
-[Setting up a new GCP project]: #setting-up-gcp-proj
+[Setting up a new GCP project]: #setting-up-a-new-gcp-project
 
 First of all [set up your GCP project and enable GAE](https://cloud.google.com/appengine/docs/standard/nodejs/building-app/creating-project) ensuring you add it to the Signal Noise organisation (you may need a tech lead to do this for you, and to enable billing via Signal Noise). Please also make sure it's in the right [organisation folder](#account-folder-structure).
 
