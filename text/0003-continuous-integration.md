@@ -121,7 +121,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: signalnoise/base:10
+      - image: eu.gcr.io/signalnoise/base:14
     steps:
       - checkout
       - run: npm ci
@@ -129,7 +129,7 @@ jobs:
 
   build:
     docker:
-      - image: signalnoise/base:10
+      - image: eu.gcr.io/signalnoise/base:14
     steps:
       - checkout
       - run: npm ci
@@ -184,7 +184,7 @@ workflows:
 Some important pieces of the above to mention include
 
 ```yaml
-- image: signalnoise/base:10
+- image: eu.gcr.io/signalnoise/base:14
 ```
 
 Signal Noise run our own [generic CI containers](https://github.com/signal-noise/containers) that are lightweight but have the tooling required for most builds pre-installed.
