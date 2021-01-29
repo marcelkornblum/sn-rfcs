@@ -172,7 +172,7 @@ Lastly, go to the website endpoint you noted earlier and check that you can see 
 
 Skip this step if you aren't making a production or staging environment. Otherwise, use the following settings unless you know what you're doing (anything that isn't mentioned is usually best left untouched).
 
-1. Your Origin should be the bucket **website** url, especially if you're using Gatsby, as explained in [this page](https://www.gatsbyjs.org/docs/deploying-to-s3-cloudfront/#setting-up-cloudfront).
+1. Your Origin should be the bucket **website** url (<name>.s3-website.eu-central-1.amazonaws.com), especially if you're using Gatsby or a statically rendered Next JS app, as explained in [this page](https://www.gatsbyjs.org/docs/deploying-to-s3-cloudfront/#setting-up-cloudfront).
 2. You should probably set _Viewer Protocol Policy_ to `Redirect HTTP to HTTPS`
 3. If your site loads data at runtime you may need CORS set up. If so, you need to do [a few extra things](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/header-caching.html#header-caching-web-cors):
   * In the Behaviours section, select `Use legacy cache settings` (this is most likely to "just work" for you, but the new settings can be more optimised for better overall performance)
