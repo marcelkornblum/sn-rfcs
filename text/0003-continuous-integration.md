@@ -47,9 +47,9 @@ The deploybot agent `cimon-sn`'s activity will appear on the PR activity feed, w
 
 You'll also be able to go to any of the test devices and find the latest project build from the [Earl] dashboard, which should be set as the browser homepage.
 
-### Merging to master
+### Merging to main
 
-Once a PR has been merged to `master` (or in fact any time the master branch is updated), the [Preview] environment is rebuilt. The link to this environment should be pinned in the project's Slack channel as it's the best place for internal team members to review the project's latest state.
+Once a PR has been merged to `main` (or in fact any time the main branch is updated), the [Preview] environment is rebuilt. The link to this environment should be pinned in the project's Slack channel as it's the best place for internal team members to review the project's latest state.
 
 It's best practice to ensure that the Preview environment is password protected, with all Signal Noise email addresses allowed to view it.
 
@@ -61,7 +61,7 @@ Once a formal release is planned (i.e. where the end to end QA process takes pla
 
 In some cases with larger teams it can be useful for some of the team to continue to work on new features while others support the QA process, perhaps unblocking it with quick hotfixes. To support this process, the Test environment always builds from the most recent push to any branch starting with the word `release`.
 
-The idea is that a new branch, e.g. `release/sprint-2` is created from the master branch, which automatically triggers a build of the Test environment. Should QA be blocked because of an easily-fixed error, a hotfix can be committed directly to this branch, which causes the Test environment to be automatically updated.
+The idea is that a new branch, e.g. `release/sprint-2` is created from the main branch, which automatically triggers a build of the Test environment. Should QA be blocked because of an easily-fixed error, a hotfix can be committed directly to this branch, which causes the Test environment to be automatically updated.
 
 ### Client review
 
@@ -71,7 +71,7 @@ Once the project is ready for UAT and client review (or really any time we'd lik
 
 where `release/sprint-1` is the branch you'd like to deploy.
 
-In order to allow the flexibility we often need, Staging builds can be triggered from any branch and are commonly from the master branch.
+In order to allow the flexibility we often need, Staging builds can be triggered from any branch and are commonly from the main branch.
 
 It should be noted that anyone with access to the relevant Slack channel can trigger a build to Staging.
 
@@ -307,8 +307,8 @@ The environments our tooling caters for are as follows:
 | [Production] | Manual    | Tag: `v*`                    | `v0.2.4` created with Github Release                                           |
 | [Staging]    | Manual    | Any                          | From branch `release/0.2.4` at a point the team feels comfortable with sharing |
 | [Test]       | Automatic | Branch: `release*`           | From branch `release/0.2.4` each time it is updated                            |
-| [Preview]    | Automatic | Branch: `master`             | From branch `master` each time a PR is merged in                               |
-| [PR]         | Automatic | Branch: Any involved in a PR | From branch `issue-65` with open PR to merge into `master`                     |
+| [Preview]    | Automatic | Branch: `main`             | From branch `main` each time a PR is merged in                               |
+| [PR]         | Automatic | Branch: Any involved in a PR | From branch `issue-65` with open PR to merge into `main`                     |
 
 ### Production
 
@@ -362,7 +362,7 @@ In our process, this environment is automatically built when code is pushed to a
 
 This environment may be reviewed at any time by any project stakeholder, or indeed anyone in the company. Every project should have this environment as it simplifies keeping people up to date and allows easy reviews in internal meetings.
 
-This environment is automatically built every time code is pushed to the `master` branch of the repository, which should be when a PR is merged.
+This environment is automatically built every time code is pushed to the `main` branch of the repository, which should be when a PR is merged.
 
 ### PR
 

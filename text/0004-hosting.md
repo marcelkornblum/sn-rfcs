@@ -213,7 +213,7 @@ Lastly, you need to add the CF's own domain as a CNAME record against each suppo
 
 We're going to set up an AWS IAM Policy with limited credentials; just enough to deploy to our new static environment. For the sake of pragmatism we usually make a single policy for all non-production environments and a second set of credentials for production. Some projects require a stronger security posture and a separate set of credentials should be made for each.
 
-The Policy defines a set of API calls that can be made (either via the CLI or the Console); we'll associate our policy with a new IAM User created specifically for that purpose, and also with the IAM Role that developers use to access resources, coming from the Master AWS account.
+The Policy defines a set of API calls that can be made (either via the CLI or the Console); we'll associate our policy with a new IAM User created specifically for that purpose, and also with the IAM Role that developers use to access resources, coming from the main AWS account.
 
 The end result will be a custom user that can be invoked by the CI system which has a very limited set of permissions, and also those exact same permissions extended to perm developers on the team where appropriate, along with the permissions from the other environments. Developers accessing resources in this way must do so via secure 2FA logins, and this gives us a balance between pragmatic access to resources and security. For some projects and environments we will not assign the policy to the main developer access role, but keep it separate as a single use role to be assigned to specific individuals.
 
