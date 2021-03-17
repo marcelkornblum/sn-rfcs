@@ -21,7 +21,7 @@ Without a consistent workflow for making changes to codebases, each codebase fol
 
 The specific workflow outlined here allows developers to commit and push often, using the remote git repository as a backup, without having to consider unitary functionality and isolation at that stage. This in turn is helpful for quick onboarding of freelancers and juniors, many of whom struggle with onerous "cleanliness" requirements at this stage.
 
-The requirement for a project to retain a useful, clear history in order to facilitate post-hoc rationalisation about the code and the work is met at the Pull Request level; the master branch has a clean history and the PRs explain the details of each code change.
+The requirement for a project to retain a useful, clear history in order to facilitate post-hoc rationalisation about the code and the work is met at the Pull Request level; the main branch has a clean history and the PRs explain the details of each code change.
 
 # Guide-level explanation
 [guide-level-explanation]: #guide-level-explanation
@@ -29,12 +29,12 @@ The requirement for a project to retain a useful, clear history in order to faci
 We assume you already have a local copy of the repo and can use basic git commands. There are a few parts to this:
 
 * [Day to day process]
-  * [Update master]
+  * [Update main]
   * [Create a feature branch]
   * [Write some code]
   * [Open a Pull Request]
   * [Review the PR]
-  * [Merge the PR to master]
+  * [Merge the PR to main]
 * [Preparing for a release]
   * [Create a release branch]
   * [Make hotfixes]
@@ -49,17 +49,19 @@ This covers the essential process of writing some code to add a feature or fix a
 
 Start off by deciding which feature or bug you'll be working on. Usually this will have an issue with a number associated.
 
-### Update master
-[Update master]: #update-master
+### Update main
+[Update main]: #update-main
 
-Update your local `master` branch so you're working on the latest code, to minimise your merge issues.
+*NB. We use `master` and `main` interchangeably here since we have repos with different main branch names*
 
-`git checkout master && git pull` or `git checkout master && git fetch && git rebase`
+Update your local `main` branch so you're working on the latest code, to minimise your merge issues.
+
+`git checkout main && git pull` or `git checkout main && git fetch && git rebase`
 
 ### Create a feature branch
 [Create a feature branch]: #create-a-feature-branch
 
-Create a new branch based on `master`, just for this specific piece of functionality (it's important that you don't make changes to other things on this branch, and that you keep the changeset a reasonable size so that other people can review your changes effectively). It doesn't matter what you call this branch - let's call it `new-branch` in this example. 
+Create a new branch based on `main`, just for this specific piece of functionality (it's important that you don't make changes to other things on this branch, and that you keep the changeset a reasonable size so that other people can review your changes effectively). It doesn't matter what you call this branch - let's call it `new-branch` in this example. 
 
 `git checkout -b new-branch` 
 
@@ -96,10 +98,10 @@ Read the [Pull Request RFC](./0005-pull-requests#review-the-pr) for details on t
 * verify the built environment works and shows the changes
 * verify any documentation etc is updated in the same PR as whatever it documents
 
-### Merge the PR to master
-[Merge the PR to master]: #merge-the-pr-to-master
+### Merge the PR to main
+[Merge the PR to main]: #merge-the-pr-to-main
 
-Read the [Pull Request RFC](./0005-pull-requests#merge-the-pr-to-master) for details on this, but the TLDR is:
+Read the [Pull Request RFC](./0005-pull-requests#merge-the-pr-to-main) for details on this, but the TLDR is:
 
 * use "Squash and Merge"
 * delete the branch
@@ -114,9 +116,9 @@ Following this process will allow the standard CI/CD tools to automate much of t
 ### Create a release branch
 [Create a release branch]: #create-a-release-branch
 
-First of all create a release branch. This should be based on the branch that contains the code to be pushed out - usually this will be on `master`.
+First of all create a release branch. This should be based on the branch that contains the code to be pushed out - usually this will be on `main`.
 
-`git checkout master && git pull`
+`git checkout main && git pull`
 
 `git checkout -b release/sprint-3`
 
@@ -133,7 +135,7 @@ Should issues arise during QA that need small fixes, these are most easily done 
 
 As with commits to a feature branch, don't worry about the formatting of commit messages etc at this point, but do note that pushing these commits will trigger a rebuild of the `test` environment, that may affect the QA process.
 
-Larger fixes or issues are better addressed via the normal process of creating a feature or bug branch and sending it via the PR process to master, then updating the release branch from there.
+Larger fixes or issues are better addressed via the normal process of creating a feature or bug branch and sending it via the PR process to main, then updating the release branch from there.
 
 ### Create a release for production
 [Create a release for production]: #create-a-release-for-production
@@ -148,7 +150,7 @@ Create a new Release, and specify a new tag is created form the release branch y
 
 Our preference is for the project managers to trigger the production deployments of our code, as inevitably they have to deal with the consequences first.
 
-Once the release has been tagged and triggered, the release branch should be merged back into master via a PR in the usual way, to capture and retain any hotfix changes made during QA.
+Once the release has been tagged and triggered, the release branch should be merged back into main via a PR in the usual way, to capture and retain any hotfix changes made during QA.
 
 # Reference-level explanation
 [Reference-level explanation]: #reference-level-explanation
@@ -159,11 +161,11 @@ We use the [GitHub Flow](https://guides.github.com/introduction/flow/) model of
 
 Note that we add extra requirements as laid out below.
 
-**NB** In this model the `master` branch represents the furthest development of the code - it is not QAd and safe to deploy. All deployments will have tags in the repo.
+**NB** In this model the `main` branch represents the furthest development of the code - it is not QAd and safe to deploy. All deployments will have tags in the repo.
 
 ## Squash and Merge
 
-We use `squash merging` to merge code from a Pull Request to its target (usually `master`). This means our master branch always has a neat history with each commit being a unit of work. The GitHub interface links each commit to its related Pull Request, so that it's easy to review everything that went into the PR and any discussion around it.
+We use `squash merging` to merge code from a Pull Request to its target (usually `main`, though some repos still use `master`). This means our main branch always has a neat history with each commit being a unit of work. The GitHub interface links each commit to its related Pull Request, so that it's easy to review everything that went into the PR and any discussion around it.
 
 It also means **you can commit and push code safely at any time**. We encourage you to think of the repo as a backup; commit frequently without worrying about everything working, and push often. When you get to the Pull Request stage is when you have to be tidy.
 
@@ -171,7 +173,7 @@ It also means **you can commit and push code safely at any time**. We encourage
 
 We never rebase as standard and with our model you should never need to. If you do want to rebase for some reason it's not acceptable to rebase anything another developer has pulled locally; this means **it's only safe to rebase commits you haven't yet pushed**. Rebasing as a pull strategy for example, is fine and many of us use it by default.
 
-Force pushing should never be necessary for any reason, and should be disabled on `master`.
+Force pushing should never be necessary for any reason, and should be disabled on `main`.
 
 ## Specific branch naming
 
@@ -179,17 +181,17 @@ The below approach allows us to tightly integrate CI systems with our workflow t
 
 Importantly, it also gives us the capability to separate QA and release preparation from ongoing feature development in a standard way; this is very important on some projects.
 
-1. The main branch of the repo is always called `master`. Nothing should be committed directly to master; it should always be updated via a PR.
-2. Feature branches, generally each relating to a specific issue / ticket, can be named anything. These are usually based on the master branch and the PR generally targets the master branch.
-3. Once a milestone is reached and code is ready for QA and review before deployment, a new branch should be made from master - this **must** be called `release/xxx` where xxx is some version code or name (e.g. `release/v0.1` or `release/sprint2`).
-4. Bug fixes (hotfixes) should be based on this branch and can be committed directly back to this branch; no PR necessary. No features should ever be committed to a release branch; they should come via master.
-5. Deployments to production should **always** be tagged in the format `vxxx` where xxx is the semantic version number or, possibly, a made-up version name (e.g. `v1.0.3`). The tag should generally be made from the `HEAD` of the release branch, which should then be merged back into master via a PR.
+1. The main branch of the repo is always called `main`. Nothing should be committed directly to main; it should always be updated via a PR.
+2. Feature branches, generally each relating to a specific issue / ticket, can be named anything. These are usually based on the main branch and the PR generally targets the main branch.
+3. Once a milestone is reached and code is ready for QA and review before deployment, a new branch should be made from main - this **must** be called `release/xxx` where xxx is some version code or name (e.g. `release/v0.1` or `release/sprint2`).
+4. Bug fixes (hotfixes) should be based on this branch and can be committed directly back to this branch; no PR necessary. No features should ever be committed to a release branch; they should come via main.
+5. Deployments to production should **always** be tagged in the format `vxxx` where xxx is the semantic version number or, possibly, a made-up version name (e.g. `v1.0.3`). The tag should generally be made from the `HEAD` of the release branch, which should then be merged back into main via a PR.
 
 ## Deployments to production
 
 Deployments to production should **always** come from a tag starting with `v`. The rest of the tag name should be a semantic version number. Ideally, the tag creation itself will trigger the production deployment (this is the default if you have [deploybot](https://github.com/signal-noise/deploybot) set up).
 
-The deployment tag should reference the last fully tested code, which ought to be a release branch. The branch should be merged back in to master (to capture any hotfixes) immediately after release.
+The deployment tag should reference the last fully tested code, which ought to be a release branch. The branch should be merged back in to main (to capture any hotfixes) immediately after release.
 
 ## Large or on-going features
 
@@ -198,9 +200,9 @@ If a feature is very large, complex or long running it's tempting to start a mai
 If possible, **this should be avoided** as it adds a lot of complexity and risks merge errors and losing history.
 
 If required, some important points to take into account when doing this are:
-* Keep the main feature branch updated from master on a regular (daily) schedule
+* Keep the main feature branch updated from main on a regular (daily) schedule
 * Each sub-branch should be merged into the main one via the standard PR process, while also mentioning that they are part of the larger feature
-* When it's time to merge the main branch back to master, you should use `merge commits` - NOT `squash and merge`. This means all the PRs from the sub-branches will appear as individual PRs on the master branch history.
+* When it's time to merge the main branch back to main, you should use `merge commits` - NOT `squash and merge`. This means all the PRs from the sub-branches will appear as individual PRs on the main branch history.
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -212,7 +214,7 @@ Having any systems and processes in place can impact the speed of onboarding of 
 
 With no common system we find ourselves doing a lot of repetitive configuration work, and it becomes much harder to reason about projects that you weren't personally part of since different workfows result in different levels of historical information, and captured in different places.
 
-Git Flow is perhaps the most commonly understood and talked-about methodology for using Git in multi-person teams, but it has a relatively steep learning curve and a fairly high overhead. Unless the project is a product with a very formal process, the master branch becomes almost unused with almost all attention on the develop branch, which leads to extra merging and unnecessary maintenance.
+Git Flow is perhaps the most commonly understood and talked-about methodology for using Git in multi-person teams, but it has a relatively steep learning curve and a fairly high overhead. Unless the project is a product with a very formal process, the main branch becomes almost unused with almost all attention on the develop branch, which leads to extra merging and unnecessary maintenance.
 
 Github Flow is fairly commonly used amongst organisations that adopt a formal scheme. The day to day workflow is easily understandable both by newbies and those used to Git Flow, and the release process is similar to Git Flow's.
 
@@ -225,7 +227,7 @@ Perhaps most importantly, compared to most formal approaches this workflow allow
 
 While Github Flow is commonly used I'm not sure of examples of this exact setup in use anywhere, but really the exact setup is no more than a little bit of (thought out) standard configuration on top of the standard process.
 
-One observation I've had is that the release process is different enough from the day-to-day that people tend to forget it and not follow it, which can sometimes lead to issues, especially if people take a very unstructured approach and e.g. build to staging from the master branch.
+One observation I've had is that the release process is different enough from the day-to-day that people tend to forget it and not follow it, which can sometimes lead to issues, especially if people take a very unstructured approach and e.g. build to staging from the main branch.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions

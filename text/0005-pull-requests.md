@@ -38,7 +38,7 @@ functional choices before they become difficult to untangle.
 
 Feel free to make more changes, and commit and push some more, but at some point you'll want to open a new PR. You can do that in the Github interface (there's a custom link in the response to your push, if you're looking for shortcuts).
 
-The Pull Request is the place to stop and consider the code that's going into the project in detail. This is what will go onto the master branch, and that needs to provide others with the information they need to understand what happened and why. 
+The Pull Request is the place to stop and consider the code that's going into the project in detail. This is what will go onto the main branch, and that needs to provide others with the information they need to understand what happened and why. 
 
 Sometimes it can take a while to get everything together for a complete PR and many people like to work with an open PR that they can slowly build up as they go. This is fine, just please remember to label the PR as `WIP` or `DO NOT MERGE`.
 
@@ -75,10 +75,10 @@ In a similar vein, when posting your review think carefully about the type of re
 * The PR should not be merged without them; i.e. they are serious enough to prevent 'fix later' or 'do better next time' to be an option, and
 * You are available to re-review the PR at short notice. 
 
-### Merge the PR to master
-[Merge the PR to master]: #merge-the-pr-to-master
+### Merge the PR to main
+[Merge the PR to main]: #merge-the-pr-to-main
 
-Please only use the `Squash and Merge` merge strategy on PRs. This ensures that the master branch's history remains clean and easy to browse, which in turn lets us commit early and often. Restricting this is configurable in the project's Github settings page.
+Please only use the `Squash and Merge` merge strategy on PRs. This ensures that the main branch's history remains clean and easy to browse, which in turn lets us commit early and often. Restricting this is configurable in the project's Github settings page.
 
 Once a PR has been approved, it's best if **the approver merges the PR**, just to keep everything ticking over, though note that they will then share credit in the github history. The exceptions are either if the PR is out of date and can't be merged, or if a comment was made about something that won't block the merge but that the author ought to read before merging.
 
