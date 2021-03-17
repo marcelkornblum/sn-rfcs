@@ -4,7 +4,7 @@ description: The how and why of Pull Requests
 ---
 - Feature Name: `pull_requests`
 - Start Date: 2021-03-11
-- RFC PR: [signal-noise/rfcs#0019](https://github.com/signal-noise/rfcs/pull/0019)
+- RFC PR: [signal-noise/rfcs#0020](https://github.com/signal-noise/rfcs/pull/0020)
 
 # Summary
 [summary]: #summary
